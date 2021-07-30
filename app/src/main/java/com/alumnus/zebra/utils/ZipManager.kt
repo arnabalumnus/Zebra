@@ -34,7 +34,7 @@ class ZipManager {
      * @param _files      Array of files to be zipped
      * @param zipFileName Provide a name for the zip file which will be generated
      */
-    fun zip(_files: Array<String>, zipFileName: String = DateFormatter.getTimeStampFileName(System.currentTimeMillis())) {
+    fun zip(_files: Array<String>, zipFileName: String = DateFormatter.getTimeStampFileName(System.currentTimeMillis())): String {
         val pathOfZebraFolder = createFolder(null, "zipFiles/")
         try {
             var origin: BufferedInputStream? = null
@@ -54,8 +54,10 @@ class ZipManager {
                 origin.close()
             }
             out.close()
+            return "$pathOfZebraFolder/$zipFileName.zip"
         } catch (e: Exception) {
             e.printStackTrace()
+            return ""
         }
     }
 

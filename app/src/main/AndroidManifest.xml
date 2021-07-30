@@ -78,6 +78,27 @@
             android:label="Event Recorder">
             <!--Make it LAUNCHER to generate separate Event Recorder app-->
         </activity>
+        <activity android:name=".ui.activity.DecryptActivity" android:label="Decrypt" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="ftp" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.enc" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.enc" />
+                <data android:pathPattern=".*\\..*\\..*\\.enc" />
+                <data android:pathPattern=".*\\..*\\.enc" />
+                <data android:pathPattern=".*\\.enc" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

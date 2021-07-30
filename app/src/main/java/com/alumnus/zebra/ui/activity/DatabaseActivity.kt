@@ -12,6 +12,7 @@ import com.alumnus.zebra.db.AppDatabase
 import com.alumnus.zebra.db.entity.CsvFileLogEntity
 import com.alumnus.zebra.utils.Constant
 import com.alumnus.zebra.utils.DateFormatter
+import com.alumnus.zebra.utils.EncryptManager
 import com.alumnus.zebra.utils.ZipManager
 import kotlinx.coroutines.*
 import java.io.File
@@ -104,11 +105,11 @@ class DatabaseActivity : AppCompatActivity() {
                 break
             }
         }
-
+        var zipFilePath = ""
         // Zip and delete available csvFiles
         if (isFilesAvailableForZipping) {
             val zipManager = ZipManager()
-            zipManager.zip(s)
+            zipFilePath = zipManager.zip(s)
             for (stringFilePath in s) {
                 val f = File(stringFilePath)
                 f.delete()
@@ -118,6 +119,8 @@ class DatabaseActivity : AppCompatActivity() {
         // Delete csvFiles record from DB
         db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").build()
         db!!.csvFileLogDao().deleteAllCSV()
+        if (zipFilePath.isNotEmpty())
+            EncryptManager.saveEncryptedFile(this, zipFilePath)
     }
 
 

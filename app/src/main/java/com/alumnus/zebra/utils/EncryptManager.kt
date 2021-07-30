@@ -51,12 +51,12 @@ object EncryptManager {
      * @param outputFileExtension       Output file extension like as(.csv, .zip, .pdf, .txt etc)
      * @return filename
      */
-    fun saveDecryptedFile(context: Context, encryptedFilePath: String, outputFileName: String = System.currentTimeMillis().toString(), outputFileExtension: String): String {
+    fun saveDecryptedFile(context: Context, encryptedFilePath: String, outputFileName: String = System.currentTimeMillis().toString(), outputFileExtension: FileType): String {
         try {
             //val inputStream: InputStream = FileInputStream("/storage/self/primary/Android/obb/com.alumnus.zebra/1627455071182.enc")
             val inputStream: InputStream = FileInputStream(encryptedFilePath)
             val file = File(context.obbDir!!.path)
-            val outputFileEnc = File("${file.absolutePath}/$outputFileName${outputFileExtension}")
+            val outputFileEnc = File("${file.absolutePath}/$outputFileName.${outputFileExtension.name}")
             FileEncryptorKT.decryptToFile(
                     keyStr = "keyLength16digit",
                     specStr = "keySizeMustBe16-",
@@ -69,5 +69,9 @@ object EncryptManager {
             e.printStackTrace()
         }
         return outputFileName
+    }
+
+    enum class FileType {
+        zip, csv
     }
 }
