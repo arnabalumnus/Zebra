@@ -1,4 +1,4 @@
-package com.alumnus.zebra
+package com.alumnus.zebra.ui.activity
 
 import android.Manifest
 import android.content.SharedPreferences
@@ -14,6 +14,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.room.Room
+import com.alumnus.zebra.R
 import com.alumnus.zebra.db.AppDatabase
 import com.alumnus.zebra.db.entity.AccLogEntity
 import com.alumnus.zebra.machineLearning.utils.ExportFiles

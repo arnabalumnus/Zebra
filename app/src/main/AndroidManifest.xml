@@ -74,9 +74,17 @@
             android:foregroundServiceType="dataSync"
             android:process=":dataCollect" />
         <activity
-            android:name=".SpecificEventTypeRecorderActivity"
+            android:name=".ui.activity.SpecificEventTypeRecorderActivity"
             android:label="Event Recorder">
-            <!--Make it LAUNCHER to generate separate Event Recorder app-->
+            <!-- TODO Make it LAUNCHER to generate separate Event Recorder app
+                    - To make this activity LAUNCHER uncomment below intent-filter block
+                    - Comment out MainActivity intent-filter block
+                    - Change package name in build.gradle(Module: Zebra.app) at line no:13 -->
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
         </activity>
         <activity android:name=".ui.activity.DecryptActivity" android:label="Decrypt" android:exported="true">
             <intent-filter>

@@ -6,4 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.DecryptActivity">
 
+    <EditText
+        android:id="@+id/et_decrypt_filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Output file name"
+        android:inputType="textCapWords"
+        app:layout_constraintBottom_toTopOf="@id/btn_decrypt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_decrypt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="decryptButtonClick"
+        android:text="Decrypt"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

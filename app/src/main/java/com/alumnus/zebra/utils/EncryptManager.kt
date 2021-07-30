@@ -46,21 +46,26 @@ object EncryptManager {
      * '/storage/self/primary/Android/obb/com.alumnus.zebra/your_filename.csv'
      *
      * @param context                   Context needed to save file
-     * @param encryptedFilePath         Path of input file
+     * @param encryptedFilePath         Path of input file                  Either  path of input file
+     * @param inputStream               InputStream of encrypted file       Or      inputStream needed
      * @param outputFileName            Name of the file to be saved
      * @param outputFileExtension       Output file extension like as(.csv, .zip, .pdf, .txt etc)
      * @return filename
      */
-    fun saveDecryptedFile(context: Context, encryptedFilePath: String, outputFileName: String = System.currentTimeMillis().toString(), outputFileExtension: FileType): String {
+    fun saveDecryptedFile(context: Context, encryptedFilePath: String? = null, inputStream: InputStream? = null, outputFileName: String = System.currentTimeMillis().toString(), outputFileExtension: FileType): String {
+        //val inputStream: InputStream = FileInputStream("/storage/self/primary/Android/obb/com.alumnus.zebra/1627455071182.enc")
+        var mInputStream: InputStream? = null
+        if (encryptedFilePath != null)
+            mInputStream = FileInputStream(encryptedFilePath)
+        else if (inputStream != null)
+            mInputStream = inputStream
         try {
-            //val inputStream: InputStream = FileInputStream("/storage/self/primary/Android/obb/com.alumnus.zebra/1627455071182.enc")
-            val inputStream: InputStream = FileInputStream(encryptedFilePath)
             val file = File(context.obbDir!!.path)
             val outputFileEnc = File("${file.absolutePath}/$outputFileName.${outputFileExtension.name}")
             FileEncryptorKT.decryptToFile(
                     keyStr = "keyLength16digit",
                     specStr = "keySizeMustBe16-",
-                    inputStream,
+                    mInputStream!!,
                     FileOutputStream(outputFileEnc)
             )
         } catch (e: FileNotFoundException) {
