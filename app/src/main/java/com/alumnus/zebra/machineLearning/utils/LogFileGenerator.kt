@@ -34,9 +34,9 @@ object LogFileGenerator {
 
 
         val logFile: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
-            File(Environment.getExternalStorageDirectory(), "ZebraApp/logs/log-$mFileName.txt")
+            File(Environment.getExternalStorageDirectory(), "ZebraApp/logs/log-$mFileName.html")
         else
-            File(context.getExternalFilesDir("ZebraApp"), "logs/log-$mFileName.txt")
+            File(context.getExternalFilesDir("ZebraApp"), "logs/log-$mFileName.html")
 
         if (!logFile.exists()) {
             try {

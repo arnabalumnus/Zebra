@@ -125,7 +125,7 @@ class DataAnalysis {
         var impactType: Int
         var maxDtsv: Double
         var areaUnderCurve: Double
-        for (i in 0..numberOfSamples - 1) {
+        for (i in 0 until numberOfSamples) {
             val currentTsv = tsvDataSet[i]
             // Update max / min TSV values if required
             if (maxTsv >= 0) {
@@ -163,7 +163,7 @@ class DataAnalysis {
                 if (impactStart > 0) {
                     // Look at DTSV to determine type
                     var maxDtsv = -1.0
-                    for (j in impactStart..i) {
+                    for (j in impactStart until i) {
                         if (maxDtsv < dtsvDataSet[j]) {
                             maxDtsv = dtsvDataSet[j]
                         }
@@ -230,7 +230,7 @@ class DataAnalysis {
                 if (impactStart > 0) {
                     // Look at DTSV to determine type
                     maxDtsv = -1.0
-                    for (j in impactStart..i) {
+                    for (j in impactStart until i) {
                         if (maxDtsv < dtsvDataSet[j]) {
                             maxDtsv = dtsvDataSet[j]
                         }
@@ -280,7 +280,7 @@ class DataAnalysis {
                 }
             }
         }
-        for (i in 0..detectedEvents.size - 1) {
+        for (i in 0 until detectedEvents.size) {
             println(detectedEvents[i].toString())
         }
         return DetectPlusNoise(detectedEvents, noiseZones)
@@ -383,14 +383,14 @@ class DataAnalysis {
                 lastEventEnded = event.count
             }
         }
-        appendLog(context, mFileName, "Significant freefall events: $numberOfSignificantFalls")
+        appendLog(context, mFileName, "<br/><b>Significant freefall events:</b> $numberOfSignificantFalls")
         println("Significant freefall events: $numberOfSignificantFalls")
-        appendLog(context, mFileName, "Significant impact events: $numberOfSignificantImpacts")
+        appendLog(context, mFileName, "<br/><b>Significant impact events:</b> $numberOfSignificantImpacts")
         println("Significant impact events: $numberOfSignificantImpacts")
-        appendLog(context, mFileName, "Force impartions: $numberOfForces")
+        appendLog(context, mFileName, "<br/><b>Force impartions:</b> $numberOfForces")
         println("Force impartions: $numberOfForces")
 
-        return "Significant freefall events: $numberOfSignificantFalls, Significant impact events: $numberOfSignificantImpacts, Force impartions: $numberOfForces"
+        return "Significant freefall events: $numberOfSignificantFalls, \nSignificant impact events: $numberOfSignificantImpacts, \nForce impartions: $numberOfForces"
     }
 
 
