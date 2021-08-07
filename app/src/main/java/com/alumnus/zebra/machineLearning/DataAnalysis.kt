@@ -125,6 +125,7 @@ class DataAnalysis {
         var impactType: Int
         var maxDtsv: Double
         var areaUnderCurve: Double
+        appendLog(context, mFileName, "<html><head><title>Zebra event log</title><link rel=\"icon\" type=\"image/png\" href=\"YOUR_ICON_URL\"/></head><body>")
         for (i in 0 until numberOfSamples) {
             val currentTsv = tsvDataSet[i]
             // Update max / min TSV values if required
@@ -358,7 +359,7 @@ class DataAnalysis {
         var impactData = IntArray(ts.size)//arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) //[0] * numberOfResampledSamples
 
         for (event in events) {
-            if ((event.event_type == EVENT_FREEFALL) and ((ts[event.eventEnd] - ts[event.eventStart]) >= FREEFALL_SIGNIFICANT)) {
+            if ((event.event_type == EVENT_FREEFALL) and ((ts[event.eventEnd] - ts[event.eventStart])/1000000 >= FREEFALL_SIGNIFICANT)) {
                 if (firstFall > 0) {
                     prefallFound = true
                     // prefallData = [Math.max((event.eventStart - PREFALL_LENGTH), 0), event.eventStart]
@@ -389,6 +390,7 @@ class DataAnalysis {
         println("Significant impact events: $numberOfSignificantImpacts")
         appendLog(context, mFileName, "<br/><b>Force impartions:</b> $numberOfForces")
         println("Force impartions: $numberOfForces")
+        appendLog(context, mFileName, "</body></html>")
 
         return "Significant freefall events: $numberOfSignificantFalls, \nSignificant impact events: $numberOfSignificantImpacts, \nForce impartions: $numberOfForces"
     }
@@ -417,7 +419,7 @@ class DataAnalysis {
                 } else {
                     spinResult = "No"
                 }
-                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
+                appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
                 println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
             } else if (event.event_type == EVENT_IMPACT) {
                 if (event.impactType == TYPE_IMPACT_HARD) {
@@ -431,13 +433,13 @@ class DataAnalysis {
                 } else {
                     impactType = "Negligible"
                 }
-                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType")
+                appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType</p>")
                 println("After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType")
 
                 appendLog(context, mFileName, detectImpactDirection(TSV, event.eventStart, event.eventEnd - 1))
                 //println("${detectImpactDirection(TSV, event.eventStart, event.count - 1)}")
             } else {
-                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Unknown event of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms")
+                appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Unknown event of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms</p>")
                 println("After ${(event.eventStart - lastEvent)} ms: Unknown event of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms")
             }
             lastEvent = event.eventEnd - 1
