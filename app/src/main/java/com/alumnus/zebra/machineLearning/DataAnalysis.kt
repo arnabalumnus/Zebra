@@ -1,10 +1,13 @@
 package com.alumnus.zebra.machineLearning
 
 import android.content.Context
+import android.util.Log
 import com.alumnus.zebra.BuildConfig
-import com.alumnus.zebra.machineLearning.pojo.EventNoisePair
+import com.alumnus.zebra.machineLearning.enums.EventType
 import com.alumnus.zebra.machineLearning.pojo.DetectedEvent
+import com.alumnus.zebra.machineLearning.pojo.EventNoisePair
 import com.alumnus.zebra.machineLearning.pojo.NoiseZone
+import com.alumnus.zebra.machineLearning.pojo.TensorFlowModelInput
 import com.alumnus.zebra.machineLearning.utils.Calculator
 import com.alumnus.zebra.machineLearning.utils.Calculator.estimateDistance
 import com.alumnus.zebra.machineLearning.utils.LogFileGenerator.appendLog
@@ -298,7 +301,7 @@ class DataAnalysis {
      */
     private fun detectSpin(tsvDataSet: ArrayList<Double>, start: Int, end: Int): Boolean {
         var detected = false
-        for (i in start..end) {
+        for (i in start until end) {
             if (tsvDataSet[i] >= TSV_FREEFALL_SPIN) {
                 detected = true
                 break
@@ -324,6 +327,7 @@ class DataAnalysis {
 
         val eventNoisePair: EventNoisePair = detectEvents(ts, tsvDataSet, dtsvDataSet)
         val events: ArrayList<DetectedEvent> = eventNoisePair.detectedEvents
+        Log.e("DataAnalysis", "TensorFlowInputs: \n${prepareTFLiteModelInput(events).toString()}")
         val noises: ArrayList<NoiseZone> = eventNoisePair.noiseZones
         appendLog(context, mFileName, "Detected events:")
         println("Detected events:")
@@ -359,7 +363,7 @@ class DataAnalysis {
         var impactData = IntArray(ts.size)//arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) //[0] * numberOfResampledSamples
 
         for (event in events) {
-            if ((event.event_type == EVENT_FREEFALL) and ((ts[event.eventEnd] - ts[event.eventStart])/1000000 >= FREEFALL_SIGNIFICANT)) {
+            if ((event.event_type == EVENT_FREEFALL) and ((ts[event.eventEnd] - ts[event.eventStart]) / 1000000 >= FREEFALL_SIGNIFICANT)) {
                 if (firstFall > 0) {
                     prefallFound = true
                     // prefallData = [Math.max((event.eventStart - PREFALL_LENGTH), 0), event.eventStart]
@@ -393,6 +397,81 @@ class DataAnalysis {
         appendLog(context, mFileName, "</body></html>")
 
         return "Significant freefall events: $numberOfSignificantFalls, \nSignificant impact events: $numberOfSignificantImpacts, \nForce impartions: $numberOfForces"
+    }
+
+    private fun prepareTFLiteModelInput(events: ArrayList<DetectedEvent>): TensorFlowModelInput {
+
+        var impactEventCount: Int = 0
+        var freeFallEventCount: Int = 0
+        var maxTSV: Double = 0.0
+        var totalTSV: Double = 0.0
+        var avgTSV: Double = 0.0
+        var maxDTSV: Double = 0.0
+        var totalDTSV: Double = 0.0
+        var avgDTSV: Double = 0.0
+        var totalSeverity: Double = 0.0
+        var avgSeverity: Double = 0.0
+        var minTSV = 1000.0
+        var totalMinTSV: Double = 0.0
+        var avgMinTSV = 0.0
+        var totalSpinDetectedEventCount: Int = 0
+        var avgSpin: Double = 0.0
+
+        for (event in events) {
+            if (event.event_type == EventType.EVENT_IMPACT.value) {
+
+                impactEventCount++
+
+                totalTSV += event.maxTsv
+                if (event.maxTsv > maxTSV)
+                    maxTSV = event.maxTsv
+
+                totalDTSV += event.dTsv
+                if (event.dTsv > maxDTSV)
+                    maxDTSV = event.dTsv
+
+                totalSeverity += event.impactType / 5.0
+
+
+            } else if (event.event_type == EventType.EVENT_FREEFALL.value) {
+                freeFallEventCount++
+
+                totalMinTSV += event.minTsv
+                if (event.minTsv < minTSV) {
+                    minTSV = event.minTsv
+                }
+
+
+                if (event.spinDetected) {
+                    totalSpinDetectedEventCount++
+                }
+
+
+            }
+
+            if (impactEventCount == 0) impactEventCount = 1
+            avgTSV = totalTSV / impactEventCount
+            avgDTSV = totalDTSV / impactEventCount
+            avgSeverity = totalSeverity / impactEventCount
+
+            if (freeFallEventCount == 0) freeFallEventCount = 1
+            avgMinTSV = totalMinTSV / freeFallEventCount
+            avgSpin = (totalSpinDetectedEventCount / freeFallEventCount).toDouble()
+        }
+        if (minTSV == 1000.0) minTSV = 0.0
+
+        return TensorFlowModelInput(
+                maxTSV = maxTSV,
+                maxDTSV = maxDTSV,
+                avgTSV = avgTSV,
+                avgDTSV = avgDTSV,
+                avgSeverity = avgSeverity,
+
+                minTSV = minTSV,
+                avgMinTSV = avgMinTSV,
+                avgSpin = avgSpin
+        )
+
     }
 
 
