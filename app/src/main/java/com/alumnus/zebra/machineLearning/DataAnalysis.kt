@@ -2,7 +2,7 @@ package com.alumnus.zebra.machineLearning
 
 import android.content.Context
 import com.alumnus.zebra.BuildConfig
-import com.alumnus.zebra.machineLearning.pojo.DetectPlusNoise
+import com.alumnus.zebra.machineLearning.pojo.EventNoisePair
 import com.alumnus.zebra.machineLearning.pojo.DetectedEvent
 import com.alumnus.zebra.machineLearning.pojo.NoiseZone
 import com.alumnus.zebra.machineLearning.utils.Calculator
@@ -89,7 +89,7 @@ class DataAnalysis {
         }
         dtsvList.add(0.0)
         for (i in 1 until tsvList.size) {
-            dtsvList.add(Calculator.calculateDTSV(tsv = tsvList[i], tsv1 = tsvList[i - 1]))
+            dtsvList.add(Calculator.calculateDTSV(tsv = tsvList[i - 1], tsv1 = tsvList[i]))
         }
         this.context = context
         if (fileName == null)
@@ -110,7 +110,7 @@ class DataAnalysis {
      * @param dtsvDataSet   List of DTSV data set
      * @return Event & Noise object
      */
-    private fun detectEvents(ts: ArrayList<Long>, tsvDataSet: ArrayList<Double>, dtsvDataSet: ArrayList<Double>): DetectPlusNoise {
+    private fun detectEvents(ts: ArrayList<Long>, tsvDataSet: ArrayList<Double>, dtsvDataSet: ArrayList<Double>): EventNoisePair {
         val noiseZones: ArrayList<NoiseZone> = ArrayList()
         val detectedEvents = arrayListOf<DetectedEvent>()
         val numberOfSamples = ts.size
@@ -283,7 +283,7 @@ class DataAnalysis {
         for (i in 0 until detectedEvents.size) {
             println(detectedEvents[i].toString())
         }
-        return DetectPlusNoise(detectedEvents, noiseZones)
+        return EventNoisePair(detectedEvents, noiseZones)
     }
 
 
@@ -321,12 +321,12 @@ class DataAnalysis {
      */
     private fun finalizeDetection(ts: ArrayList<Long>, tsvDataSet: ArrayList<Double>, dtsvDataSet: ArrayList<Double>): String {
 
-        val detectPlusNoise: DetectPlusNoise = detectEvents(ts, tsvDataSet, dtsvDataSet)
-        val events: ArrayList<DetectedEvent> = detectPlusNoise.detectedEvents
-        val noises: ArrayList<NoiseZone> = detectPlusNoise.noiseZones
+        val eventNoisePair: EventNoisePair = detectEvents(ts, tsvDataSet, dtsvDataSet)
+        val events: ArrayList<DetectedEvent> = eventNoisePair.detectedEvents
+        val noises: ArrayList<NoiseZone> = eventNoisePair.noiseZones
         appendLog(context, mFileName, "Detected events:")
         println("Detected events:")
-        parseEvents(detectPlusNoise.detectedEvents, ts)
+        parseEvents(eventNoisePair.detectedEvents, ts)
 
         appendLog(context, mFileName, "Noise zones:")
         println("Noise zones:")
@@ -358,7 +358,7 @@ class DataAnalysis {
         var impactData = IntArray(ts.size)//arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) //[0] * numberOfResampledSamples
 
         for (event in events) {
-            if ((event.event_type == EVENT_FREEFALL) and ((ts[event.count] - ts[event.eventStart]) >= FREEFALL_SIGNIFICANT)) {
+            if ((event.event_type == EVENT_FREEFALL) and ((ts[event.eventEnd] - ts[event.eventStart]) >= FREEFALL_SIGNIFICANT)) {
                 if (firstFall > 0) {
                     prefallFound = true
                     // prefallData = [Math.max((event.eventStart - PREFALL_LENGTH), 0), event.eventStart]
@@ -369,7 +369,7 @@ class DataAnalysis {
                 }
                 numberOfSignificantFalls += 1
                 freefallData[event.eventStart] = 100
-                lastEventEnded = event.count
+                lastEventEnded = event.eventEnd
             } else if ((event.event_type == EVENT_IMPACT) and (event.impactType == TYPE_IMPACT_FORCE)) {
                 numberOfForces += 1
             } else if ((event.event_type == EVENT_IMPACT) and (event.impactType >= TYPE_IMPACT_MEDIUM)) {
@@ -380,7 +380,7 @@ class DataAnalysis {
                     //preimpactDataTs.add([ts[max(event.eventStart - PREIMPACT_LENGTH, lastEventEnded + 1)], ts[event.eventStart])
                     preimpactFound = true
                 }
-                lastEventEnded = event.count
+                lastEventEnded = event.eventEnd
             }
         }
         appendLog(context, mFileName, "<br/><b>Significant freefall events:</b> $numberOfSignificantFalls")
@@ -417,8 +417,8 @@ class DataAnalysis {
                 } else {
                     spinResult = "No"
                 }
-                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.count] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.count] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
-                println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.count] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.count] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
+                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
+                println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
             } else if (event.event_type == EVENT_IMPACT) {
                 if (event.impactType == TYPE_IMPACT_HARD) {
                     impactType = "Severe"
@@ -431,16 +431,16 @@ class DataAnalysis {
                 } else {
                     impactType = "Negligible"
                 }
-                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.count] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType")
-                println("After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.count] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType")
+                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType")
+                println("After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType")
 
-                appendLog(context, mFileName, detectImpactDirection(TSV, event.eventStart, event.count - 1))
+                appendLog(context, mFileName, detectImpactDirection(TSV, event.eventStart, event.eventEnd - 1))
                 //println("${detectImpactDirection(TSV, event.eventStart, event.count - 1)}")
             } else {
-                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Unknown event of duration ${(tsDataSet[event.count] - tsDataSet[event.eventStart])} ms")
-                println("After ${(event.eventStart - lastEvent)} ms: Unknown event of duration ${(tsDataSet[event.count] - tsDataSet[event.eventStart])} ms")
+                appendLog(context, mFileName, "After ${(event.eventStart - lastEvent)} ms: Unknown event of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms")
+                println("After ${(event.eventStart - lastEvent)} ms: Unknown event of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms")
             }
-            lastEvent = event.count - 1
+            lastEvent = event.eventEnd - 1
         }
         return
     }

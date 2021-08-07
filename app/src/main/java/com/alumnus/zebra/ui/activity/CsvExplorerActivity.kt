@@ -27,7 +27,7 @@ import java.io.FileNotFoundException
 class CsvExplorerActivity : AppCompatActivity() {
 
     private val TAG = javaClass.simpleName
-
+    //private var tflite: Interpreter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
