@@ -82,7 +82,7 @@ class DataAnalysis {
      * @param fileName      File will generate with provided filename
      * @return              finalizeDetection()
      */
-    fun startEventAnalysis(xyzList: ArrayList<AccelerationNumericData>, context: Context, fileName: String? = DateFormatter.getTimeStampFileName(System.currentTimeMillis())): String {
+    fun startEventAnalysis(xyzList: ArrayList<AccelerationNumericData>, context: Context, fileName: String? = DateFormatter.getTimeStampFileName(System.currentTimeMillis())): TensorFlowModelInput {
         val tsList = ArrayList<Long>()
         val tsvList = ArrayList<Double>()
         val dtsvList = ArrayList<Double>()
@@ -129,6 +129,7 @@ class DataAnalysis {
         var maxDtsv: Double
         var areaUnderCurve: Double
         appendLog(context, mFileName, "<html><head><title>Zebra event log</title><link rel=\"icon\" type=\"image/png\" href=\"YOUR_ICON_URL\"/></head><body>")
+        println("-------------------------------------------------------------------------------------------------------------------------")
         for (i in 0 until numberOfSamples) {
             val currentTsv = tsvDataSet[i]
             // Update max / min TSV values if required
@@ -323,11 +324,11 @@ class DataAnalysis {
      *                      2. Significant impact events:
      *                      3. Force impartions: "
      */
-    private fun finalizeDetection(ts: ArrayList<Long>, tsvDataSet: ArrayList<Double>, dtsvDataSet: ArrayList<Double>): String {
+    private fun finalizeDetection(ts: ArrayList<Long>, tsvDataSet: ArrayList<Double>, dtsvDataSet: ArrayList<Double>): TensorFlowModelInput {
 
         val eventNoisePair: EventNoisePair = detectEvents(ts, tsvDataSet, dtsvDataSet)
         val events: ArrayList<DetectedEvent> = eventNoisePair.detectedEvents
-        Log.e("DataAnalysis", "TensorFlowInputs: \n${prepareTFLiteModelInput(events).toString()}")
+        //Log.e("DataAnalysis", "TensorFlowInputs: \n${prepareTFLiteModelInput(events).toString()}")
         val noises: ArrayList<NoiseZone> = eventNoisePair.noiseZones
         appendLog(context, mFileName, "Detected events:")
         println("Detected events:")
@@ -396,7 +397,8 @@ class DataAnalysis {
         println("Force impartions: $numberOfForces")
         appendLog(context, mFileName, "</body></html>")
 
-        return "Significant freefall events: $numberOfSignificantFalls, \nSignificant impact events: $numberOfSignificantImpacts, \nForce impartions: $numberOfForces"
+        //return "Significant freefall events: $numberOfSignificantFalls, \nSignificant impact events: $numberOfSignificantImpacts, \nForce impartions: $numberOfForces"
+        return prepareTFLiteModelInput(events)
     }
 
     private fun prepareTFLiteModelInput(events: ArrayList<DetectedEvent>): TensorFlowModelInput {

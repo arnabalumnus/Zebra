@@ -11,13 +11,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alumnus.zebra.BuildConfig
 import com.alumnus.zebra.R
 import com.alumnus.zebra.machineLearning.DataAnalysis
+import com.alumnus.zebra.machineLearning.pojo.TensorFlowModelInput
+import com.alumnus.zebra.machineLearning.utils.Calculator
 import com.alumnus.zebra.pojo.AccelerationNumericData
 import com.alumnus.zebra.pojo.AccelerationStringData
 import com.alumnus.zebra.ui.adapter.AccelerationDataAdapter
 import com.alumnus.zebra.utils.CsvFileOperator.readCsvFile
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_csv_explorer.*
+import org.tensorflow.lite.Interpreter
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileNotFoundException
+import java.io.IOException
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 
 /**
  * This activity responsible for opening .csv files exported by Zebra app
@@ -27,7 +35,7 @@ import java.io.FileNotFoundException
 class CsvExplorerActivity : AppCompatActivity() {
 
     private val TAG = javaClass.simpleName
-    //private var tflite: Interpreter? = null
+    private var tflite: Interpreter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -82,6 +90,7 @@ class CsvExplorerActivity : AppCompatActivity() {
             accNumericDataList.add(accNumericData)
         }
         val result = DataAnalysis().startEventAnalysis(accNumericDataList, this, null)
+        runMachineLearning(result)
         Log.i(TAG, "LogFile: $result")
         Toast.makeText(this, "LogFile:\n$result", Toast.LENGTH_LONG).show()
         val data = DoubleArray(accNumericDataList.size * 3)
@@ -102,11 +111,11 @@ class CsvExplorerActivity : AppCompatActivity() {
         */
     }
 
-    /*
-    private fun runMachineLearning(accelerations: ArrayList<AccelerationStringData>) {
+
+    private fun runMachineLearning(dataFrame: TensorFlowModelInput) {
         try {
             tflite = Interpreter(loadModelFile())
-            Snackbar.make(findViewById(R.id.rv_acceleration_data), "${predictDataSet(accelerations)}", Snackbar.LENGTH_INDEFINITE).setAction("OK", {}).show()
+            Snackbar.make(findViewById(R.id.rv_acceleration_data), "${predictDataSet(dataFrame)}", Snackbar.LENGTH_INDEFINITE).setAction("OK", {}).show()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -122,7 +131,7 @@ class CsvExplorerActivity : AppCompatActivity() {
      */
     @Throws(IOException::class)
     private fun loadModelFile(): MappedByteBuffer {
-        val fileDescriptor = this.assets.openFd("zebra_new_df_model.tflite")
+        val fileDescriptor = this.assets.openFd("zebra_ws_model.tflite")
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
         val startOffset = fileDescriptor.startOffset
@@ -135,22 +144,23 @@ class CsvExplorerActivity : AppCompatActivity() {
      *
      * @return Y value
      */
-    private fun predictDataSet(accelerations: ArrayList<AccelerationStringData>): String {
-        val input: Array<Int> = calculation(accelerations)
-        val inputVal = FloatArray(2)
-        //inputVal[0] = 200F
-        //inputVal[1] = 50F
-        //inputVal[2] = 0F
-        inputVal[0] = input[0].toFloat()
-        inputVal[1] = input[1].toFloat()
-        //inputVal[2] = input[2].toFloat()
-        Log.d(TAG, "DataSet: [${inputVal[0]}, ${inputVal[1]}}] ")
-        if (inputVal[1] == 0F && inputVal[2] == 0F) {
-            return "No major event detected"
-        }
+    private fun predictDataSet(dataFrame: TensorFlowModelInput): String {
+        val inputVal = FloatArray(8)
+
+        inputVal[0] = dataFrame.maxTSV.toFloat()
+        inputVal[1] = dataFrame.maxDTSV.toFloat()
+        inputVal[2] = dataFrame.avgTSV.toFloat()
+        inputVal[3] = dataFrame.avgDTSV.toFloat()
+        inputVal[4] = dataFrame.avgSeverity.toFloat()
+        inputVal[5] = dataFrame.minTSV.toFloat()
+        inputVal[6] = dataFrame.avgMinTSV.toFloat()
+        inputVal[7] = dataFrame.avgSpin.toFloat()
+
+        Log.d(TAG, "DataSet: [${inputVal[0]}, ${inputVal[1]}, ${inputVal[2]}, ${inputVal[3]}, ${inputVal[4]}, ${inputVal[5]}, ${inputVal[6]}, ${inputVal[7]}}] ")
+
         val output = Array(1) { FloatArray(1) }
         tflite!!.run(inputVal, output)
-        Log.d(TAG, "Output: ${output[0][0]}\n\n")
+        Log.e(TAG, "Predicted Output: ${output[0][0]}\n\n")
         if (output[0][0] > 0.5F)
             return "Throw!! Model Output:${output[0][0]} \nDataSet: [${inputVal[0]}, Force:${inputVal[1]}]"
         else if (output[0][0] < 0.5F)
@@ -186,5 +196,4 @@ class CsvExplorerActivity : AppCompatActivity() {
 
         return arrayOf(tsvList.max()!!.toInt(), tsvList.min()!!.toInt())
     }
-    */
 }
