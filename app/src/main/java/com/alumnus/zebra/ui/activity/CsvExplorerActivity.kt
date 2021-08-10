@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alumnus.zebra.BuildConfig
 import com.alumnus.zebra.R
 import com.alumnus.zebra.machineLearning.DataAnalysis
+import com.alumnus.zebra.machineLearning.PredictionManager
 import com.alumnus.zebra.machineLearning.pojo.TensorFlowModelInput
 import com.alumnus.zebra.machineLearning.utils.Calculator
 import com.alumnus.zebra.pojo.AccelerationNumericData
@@ -114,8 +115,22 @@ class CsvExplorerActivity : AppCompatActivity() {
 
     private fun runMachineLearning(dataFrame: TensorFlowModelInput) {
         try {
-            tflite = Interpreter(loadModelFile())
-            Snackbar.make(findViewById(R.id.rv_acceleration_data), "${predictDataSet(dataFrame)}", Snackbar.LENGTH_INDEFINITE).setAction("OK", {}).show()
+            var predictedConfidence = 0F
+            var resultOutput = ""
+            if (predictedConfidence < PredictionManager.isDsEvent(this, dataFrame)) {
+                predictedConfidence = PredictionManager.isDsEvent(this, dataFrame)
+                resultOutput = "Desk Slam"
+            }
+            if (predictedConfidence < PredictionManager.isFsEvent(this, dataFrame)) {
+                predictedConfidence = PredictionManager.isFsEvent(this, dataFrame)
+                resultOutput = "Floor Slam"
+            }
+            if (predictedConfidence < PredictionManager.isWsEvent(this, dataFrame)) {
+                predictedConfidence = PredictionManager.isWsEvent(this, dataFrame)
+                resultOutput = "Wall Slam"
+            }
+
+            Snackbar.make(findViewById(R.id.rv_acceleration_data), resultOutput, Snackbar.LENGTH_INDEFINITE).setAction("OK", {}).show()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
