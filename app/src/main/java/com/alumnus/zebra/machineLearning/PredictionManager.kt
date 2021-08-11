@@ -70,6 +70,64 @@ object PredictionManager {
         return output[0][0]
     }
 
+    fun isPpEvent(context: Context, dataFrame: TensorFlowModelInput): Float {
+        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "zebra_pp_model.tflite"))
+        val inputVal = FloatArray(8)
+
+        inputVal[0] = dataFrame.maxTSV.toFloat()
+        inputVal[1] = dataFrame.maxDTSV.toFloat()
+        inputVal[2] = dataFrame.avgTSV.toFloat()
+        inputVal[3] = dataFrame.avgDTSV.toFloat()
+        inputVal[4] = dataFrame.avgSeverity.toFloat()
+        inputVal[5] = dataFrame.minTSV.toFloat()
+        inputVal[6] = dataFrame.avgMinTSV.toFloat()
+        inputVal[7] = dataFrame.avgSpin.toFloat()
+
+        val output = Array(1) { FloatArray(1) }
+        tfLite.run(inputVal, output)
+        Log.i(TAG, "Put into pocket: ${output[0][0]}")
+        return output[0][0]
+    }
+
+
+    fun isPfEvent(context: Context, dataFrame: TensorFlowModelInput): Float {
+        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "zebra_pf_model.tflite"))
+        val inputVal = FloatArray(8)
+
+        inputVal[0] = dataFrame.maxTSV.toFloat()
+        inputVal[1] = dataFrame.maxDTSV.toFloat()
+        inputVal[2] = dataFrame.avgTSV.toFloat()
+        inputVal[3] = dataFrame.avgDTSV.toFloat()
+        inputVal[4] = dataFrame.avgSeverity.toFloat()
+        inputVal[5] = dataFrame.minTSV.toFloat()
+        inputVal[6] = dataFrame.avgMinTSV.toFloat()
+        inputVal[7] = dataFrame.avgSpin.toFloat()
+
+        val output = Array(1) { FloatArray(1) }
+        tfLite.run(inputVal, output)
+        Log.i(TAG, "Fall while put into Pocket: ${output[0][0]}")
+        return output[0][0]
+    }
+
+    fun isFfEvent(context: Context, dataFrame: TensorFlowModelInput): Float {
+        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "zebra_ff_model.tflite"))
+        val inputVal = FloatArray(8)
+
+        inputVal[0] = dataFrame.maxTSV.toFloat()
+        inputVal[1] = dataFrame.maxDTSV.toFloat()
+        inputVal[2] = dataFrame.avgTSV.toFloat()
+        inputVal[3] = dataFrame.avgDTSV.toFloat()
+        inputVal[4] = dataFrame.avgSeverity.toFloat()
+        inputVal[5] = dataFrame.minTSV.toFloat()
+        inputVal[6] = dataFrame.avgMinTSV.toFloat()
+        inputVal[7] = dataFrame.avgSpin.toFloat()
+
+        val output = Array(1) { FloatArray(1) }
+        tfLite.run(inputVal, output)
+        Log.i(TAG, "Fall from 3ft in x axis: ${output[0][0]}")
+        return output[0][0]
+    }
+
 
 
 

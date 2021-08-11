@@ -129,8 +129,20 @@ class CsvExplorerActivity : AppCompatActivity() {
                 predictedConfidence = PredictionManager.isWsEvent(this, dataFrame)
                 resultOutput = "Wall Slam"
             }
-
-            Snackbar.make(findViewById(R.id.rv_acceleration_data), resultOutput, Snackbar.LENGTH_INDEFINITE).setAction("OK", {}).show()
+            if (predictedConfidence < PredictionManager.isPpEvent(this, dataFrame)) {
+                predictedConfidence = PredictionManager.isPpEvent(this, dataFrame)
+                resultOutput = "Put into pocket"
+            }
+            if (predictedConfidence < PredictionManager.isPfEvent(this, dataFrame)) {
+                predictedConfidence = PredictionManager.isPfEvent(this, dataFrame)
+                resultOutput = "Fall while put into Pocket"
+            }
+            if (predictedConfidence < PredictionManager.isFfEvent(this, dataFrame)) {
+                predictedConfidence = PredictionManager.isFfEvent(this, dataFrame)
+                resultOutput = "Free fall from 3feet i X axis"
+            }
+            Log.d(TAG, "predictedConfidence: $predictedConfidence")
+            Snackbar.make(findViewById(R.id.rv_acceleration_data), "$resultOutput \nConfidence:${predictedConfidence}", Snackbar.LENGTH_INDEFINITE).setAction("OK", {}).show()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
