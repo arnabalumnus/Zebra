@@ -9,6 +9,18 @@ import androidx.core.content.ContextCompat
 import com.alumnus.zebra.machineLearning.utils.ExportFiles.prepareDataChunk
 import com.alumnus.zebra.service.LifeTimeService
 
+/**
+ * This PowerConnectionReceiver is Broadcast Receiver that triggers its
+ * onReceive() on connecting and disconnecting power to android device.
+ *
+ * On connecting power prepareDataChunk() helps to move data from
+ * accelerometer_log database table to a timestamp.csv file.
+ *
+ * On power disconnection nothing implemented. This can be changed based
+ * on client requirements.
+ *
+ * @author Arnab Kundu
+ */
 class PowerConnectionReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -21,6 +33,7 @@ class PowerConnectionReceiver : BroadcastReceiver() {
             //endregion
             prepareDataChunk(context, false)
         }
+
         if (intent.action == Intent.ACTION_POWER_DISCONNECTED) {
             Toast.makeText(context, "POWER DISCONNECTED", Toast.LENGTH_SHORT).show()
 
