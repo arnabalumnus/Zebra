@@ -35,7 +35,7 @@ interface AccLogDao {
      * @param data_chunk_size Size of List<AccLogEntity> data
      * @return List<AccLogEntity>
      * @usage How to call this
-     * AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "database-name").build();
+     * AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, DATABASE_NAME).build();
      * List<AccLogEntity> accLogEntities = db.accLogDao().processDataChunk(10);
      */
     //@Synchronized

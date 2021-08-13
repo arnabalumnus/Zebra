@@ -11,6 +11,7 @@ import com.alumnus.zebra.R
 import com.alumnus.zebra.db.AppDatabase
 import com.alumnus.zebra.db.entity.CsvFileLogEntity
 import com.alumnus.zebra.utils.Constant
+import com.alumnus.zebra.utils.Constant.DATABASE_NAME
 import com.alumnus.zebra.utils.DateFormatter
 import com.alumnus.zebra.utils.EncryptManager
 import com.alumnus.zebra.utils.ZipManager
@@ -45,7 +46,7 @@ class DatabaseActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
     }
 
     fun getTotalCount(view: View) {
@@ -117,7 +118,7 @@ class DatabaseActivity : AppCompatActivity() {
         }
 
         // Delete csvFiles record from DB
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
         db!!.csvFileLogDao().deleteAllCSV()
         if (zipFilePath.isNotEmpty())
             EncryptManager.saveEncryptedFile(this, zipFilePath)
@@ -129,7 +130,7 @@ class DatabaseActivity : AppCompatActivity() {
      * @return Long
      */
     private suspend fun getRowCountOfAccelerometerTable(): Long {
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
         return db!!.accLogDao().count
     }
 
@@ -139,7 +140,7 @@ class DatabaseActivity : AppCompatActivity() {
      * @return String
      */
     private suspend fun fetchTimeStampDBTask(): String {
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
         val startingTimeStamp = db!!.accLogDao().getStartingTimeStamp()
         val lastRecordTime: Long = db!!.accLogDao().getLastRecordTime() ?: 0
         return "Starting timestamp: ${DateFormatter.getTimeStamp(startingTimeStamp)}\nLast timestamp: ${DateFormatter.getTimeStamp(lastRecordTime)}"
@@ -154,7 +155,7 @@ class DatabaseActivity : AppCompatActivity() {
         val stringBuilder = StringBuilder()
         stringBuilder.append("| FileName                                  |  rows |\n")
         stringBuilder.append("|-----------------------------------------------|----------|\n")
-        val db: AppDatabase = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").build()
+        val db: AppDatabase = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
         val listOfCsv = db.csvFileLogDao().getAll()
         for (row in listOfCsv.indices) {
             stringBuilder.append(String.format("| %20s | %5s |\n", listOfCsv[row].file_name, listOfCsv[row].count))
@@ -168,7 +169,7 @@ class DatabaseActivity : AppCompatActivity() {
      * Zip those csv file and delete to clear storage
      */
     private suspend fun deleteAfterZippingFiles() {
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
         val listOfCsv = db!!.csvFileLogDao().getAll()
         if (listOfCsv.isNotEmpty()) {             // Avoid creating 0 byte Zip file, When no csvFile available.
             /** Zip CSV files and delete the original .csv files  */

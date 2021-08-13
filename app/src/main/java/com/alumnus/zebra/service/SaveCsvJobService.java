@@ -60,7 +60,7 @@ public class SaveCsvJobService extends JobService {
                         return;
                     }
                     CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
-                    AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "database-name").build();
+                    AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, DATABASE_NAME).build();
 
                     List<AccLogEntity> accLogEntities = db.accLogDao().getAll();
                     csvWrite.writeNext(new String[]{"TS", "X", "Y", "Z"});

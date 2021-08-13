@@ -8,6 +8,7 @@ import com.alumnus.zebra.db.entity.CsvFileLogEntity
 import com.alumnus.zebra.machineLearning.DataAnalysis
 import com.alumnus.zebra.pojo.AccelerationNumericData
 import com.alumnus.zebra.utils.Constant
+import com.alumnus.zebra.utils.Constant.DATABASE_NAME
 import com.alumnus.zebra.utils.CsvFileOperator
 import com.alumnus.zebra.utils.DateFormatter
 import com.alumnus.zebra.utils.FolderFiles
@@ -31,7 +32,7 @@ object ExportFiles {
     @Synchronized
     fun prepareDataChunk(context: Context, isForceExportByUser: Boolean = false) {
         val runnable = Runnable {
-            val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "database-name").build()
+            val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
 
             //try {
             /**
@@ -97,7 +98,7 @@ object ExportFiles {
     private fun exportCSVFile(context: Context, accelerationsDataList: ArrayList<AccelerationNumericData>, fileName: String, rowCount: Int) {
 
         // Create Database object
-        val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "database-name").build()
+        val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
 
         // Store exported .csv filename into DB, To delete saved .csv file later (for storage cleanup)
         db.csvFileLogDao().insert(CsvFileLogEntity(fileName, rowCount.toLong()))
@@ -116,7 +117,7 @@ object ExportFiles {
      * @param context
      */
      fun deleteOldCSVFile(context: Context) {
-        val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "database-name").build()
+        val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
         if (db.csvFileLogDao().csvFileCount > Constant.RETAIN_NUMBER_OF_CSV_FILE) {
             val fileName = db.csvFileLogDao().oldestCSVFile
             val isDeleteSuccessful = FolderFiles.deleteFile(context = context, folderName = "csvData", fileName = fileName, fileExtension = ".csv")
@@ -148,7 +149,7 @@ object ExportFiles {
      * @return fileName
      */
     private fun generateChunkFileName(context: Context): String {
-        val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "database-name").build()
+        val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
         return DateFormatter.getTimeStampFileName(db.accLogDao().getStartingTimeStamp())
     }
 }

@@ -17,6 +17,7 @@ import androidx.room.Room
 import com.alumnus.zebra.R
 import com.alumnus.zebra.db.AppDatabase
 import com.alumnus.zebra.db.entity.AccLogEntity
+import com.alumnus.zebra.utils.Constant.DATABASE_NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -59,7 +60,7 @@ class LifeTimeService : Service(), SensorEventListener {
         if (frequency == 50) mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_STATUS_ACCURACY_LOW) //Value=1 , Frequency: ~50/sec
         else if (frequency == 15) mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM) //Value=2 , Frequency: ~15/sec
         else if (frequency == 5) mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_STATUS_ACCURACY_HIGH) //Value=3 , Frequency: ~5/sec
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).build()
         accLogEntity = AccLogEntity()
         runAsForeground()
         return START_NOT_STICKY

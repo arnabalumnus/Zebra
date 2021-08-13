@@ -13,6 +13,7 @@ import com.alumnus.zebra.db.AppDatabase;
 import com.alumnus.zebra.db.entity.AccLogEntity;
 import com.alumnus.zebra.db.entity.CsvFileLogEntity;
 import com.alumnus.zebra.machineLearning.DataAnalysis;
+import com.alumnus.zebra.machineLearning.pojo.TensorFlowModelInput;
 import com.alumnus.zebra.pojo.AccelerationNumericData;
 import com.alumnus.zebra.pojo.AccelerationStringData;
 import com.opencsv.CSVWriter;
@@ -27,6 +28,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.alumnus.zebra.utils.Constant.DATABASE_NAME;
 
 @Deprecated
 public class ExportFile {
@@ -52,7 +55,7 @@ public class ExportFile {
                     return;
                 }
             }
-            AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "database-name").build();
+            AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME).build();
             while (db.accLogDao().getCount() > Constant.DATA_CHUNK_SIZE) {
                 List<AccLogEntity> accLogEntities = db.accLogDao().getAll();
                 if (accLogEntities.size() == 0) {
@@ -151,7 +154,7 @@ public class ExportFile {
                         Float.parseFloat(tokens[3].replace("\"", "")));
                 accelerationsDataList.add(accelerationData);
             }
-            String result = new DataAnalysis().startEventAnalysis(accelerationsDataList, context, null);
+            TensorFlowModelInput result = new DataAnalysis().startEventAnalysis(accelerationsDataList, context, null);
             //New approach
             /*ArrayList<Double> tsvList = new ArrayList<>();
             for (AccelerationData accelerationsData : accelerationsDataList) {

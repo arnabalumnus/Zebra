@@ -1,7 +1,10 @@
 package com.alumnus.zebra.utils
 
 import android.content.Context
-import java.io.*
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.InputStream
 
 /**
  * EncryptManager saves encrypted and decrypted files in SD Card
@@ -25,8 +28,15 @@ object EncryptManager {
         try {
             //val inputStream: InputStream = FileInputStream("/storage/self/primary/ZebraApp/zipFiles/2021, Jul-22 Time-12 23 41.zip")
             val inputStream: InputStream = FileInputStream(inputFilePath)
-            val file = File(context.obbDir!!.path)
-            val outputFileEnc = File("${file.absolutePath}/$outputFileName.enc")
+
+            /** Either use this 2 line to create Folder and file */
+            FolderFiles.createFolder(context, "encrypt")
+            val outputFileEnc = FolderFiles.createFile(context, "encrypt", outputFileName, "enc")
+
+            /** Or alternatively use next 2 line in above Android 10 version */
+            //val file = File(context.obbDir!!.path)
+            //val outputFileEnc = File("${file.absolutePath}/$outputFileName.enc")
+
             FileEncryptorKT.encryptToFile(
                     keyStr = "keyLength16digit",
                     specStr = "keySizeMustBe16-",
@@ -60,8 +70,14 @@ object EncryptManager {
         else if (inputStream != null)
             mInputStream = inputStream
         try {
-            val file = File(context.obbDir!!.path)
-            val outputFileEnc = File("${file.absolutePath}/$outputFileName.${outputFileExtension.name}")
+            /** Either use this 2 line to create Folder and file */
+            FolderFiles.createFolder(context, "decrypt")
+            val outputFileEnc = FolderFiles.createFile(context, "decrypt", outputFileName, outputFileExtension.name)
+
+            /** Or alternatively use next 2 line in above Android 10 version */
+            //val file = File(context.obbDir!!.path)
+            //val outputFileEnc = File("${file.absolutePath}/$outputFileName.${outputFileExtension.name}")
+
             FileEncryptorKT.decryptToFile(
                     keyStr = "keyLength16digit",
                     specStr = "keySizeMustBe16-",

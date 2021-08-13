@@ -20,6 +20,7 @@ import com.alumnus.zebra.db.entity.AccLogEntity
 import com.alumnus.zebra.machineLearning.utils.ExportFiles
 import com.alumnus.zebra.pojo.AccelerationNumericData
 import com.alumnus.zebra.utils.Constant
+import com.alumnus.zebra.utils.Constant.DATABASE_NAME
 import com.alumnus.zebra.utils.CsvFileOperator
 import com.alumnus.zebra.utils.DateFormatter
 import com.alumnus.zebra.utils.FolderFiles
@@ -47,7 +48,7 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specfice_event_type_recorder)
 
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-name").allowMainThreadQueries().build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).allowMainThreadQueries().build()
         accLogEntity = AccLogEntity()
 
         sp = getSharedPreferences(Constant.SP, MODE_PRIVATE)
