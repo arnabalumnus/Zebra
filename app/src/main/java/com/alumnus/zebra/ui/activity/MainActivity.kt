@@ -17,6 +17,16 @@ import com.alumnus.zebra.service.LifeTimeService
 import com.alumnus.zebra.utils.AutoStart
 import com.alumnus.zebra.utils.Constant
 
+/**
+ * This is the Launcher Activity for this Zebra app.
+ * Its a Dashboard for this with couple of buttons. Utility of this buttons explained below:
+ *
+ * 1. Accelerometer -   It displays the current accelerometer data in 2 graph in `AccelerometerActivity` screen
+ * 2. Service -         It is responsible for start the `LifeTimeService` with user specified frequency
+ * 3. Export Data -     It exports data from database. In details it exports all rows of `accelerometer_log` table into a csv file.
+ *                      Follow the README for exported file location.
+ * 4. Database -        It navigates user to `DatabaseActivity` which gives user a quick glance of database entry/status.
+ */
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"

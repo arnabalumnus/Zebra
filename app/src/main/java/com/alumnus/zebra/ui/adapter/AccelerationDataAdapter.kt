@@ -10,6 +10,12 @@ import com.alumnus.zebra.R
 import com.alumnus.zebra.pojo.AccelerationStringData
 import java.util.*
 
+/**
+ * RecyclerView Adapter class for CSV file viewer
+ * Used in CsvExplorerActivity class
+ *
+ * @author Arnab Kundu
+ */
 class AccelerationDataAdapter(private val accelerations: ArrayList<AccelerationStringData>) : RecyclerView.Adapter<AccelerationDataAdapter.ViewHolder>() {
     var context: Context? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

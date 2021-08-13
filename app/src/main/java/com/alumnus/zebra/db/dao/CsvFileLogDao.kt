@@ -6,6 +6,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.alumnus.zebra.db.entity.CsvFileLogEntity
 
+/**
+ * All the required database quires related to `csv_file_log` table is declared in this Interface
+ */
 @Dao
 interface CsvFileLogDao {
     @Query("SELECT * FROM csv_file_log")

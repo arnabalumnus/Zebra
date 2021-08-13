@@ -3,6 +3,9 @@ package com.alumnus.zebra.db.dao
 import androidx.room.*
 import com.alumnus.zebra.db.entity.AccLogEntity
 
+/**
+ * All the required database quires related to `accelerometer_log` table is declared in this Interface
+ */
 @Dao
 interface AccLogDao {
     @get:Query("SELECT * FROM accelerometer_log")

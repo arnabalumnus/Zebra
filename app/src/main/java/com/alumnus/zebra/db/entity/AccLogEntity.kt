@@ -5,6 +5,9 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+/**
+ * This class is responsible for creating `accelerometer_log` table in database
+ */
 @Entity(tableName = "accelerometer_log", indices = [Index(value = ["TS"], unique = true)])
 data class AccLogEntity(
 

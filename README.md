@@ -45,7 +45,7 @@ database.
 |2                           |1616070150298|0.81234902143478|0.0             |9.8163099670410 |
 |3                           |1616070150319|9.81630996704101|0.81234902143478|0.0             |
 
->**id : Long**                                    **Constrain : AutoGenerate PrimaryKey** 
+>**id : Long**                                    **Constrain : AutoGenerate PrimaryKey**           
 >**ts : Long**   *TimeStamp in millisecond*       **Constrain : Unique**        
 >**X  : float**  *x coordinate values*     
 >**Y  : float**  *y coordinate values*     

@@ -5,6 +5,9 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+/**
+ * This class is responsible for creating `csv_file_log` table in database
+ */
 @Entity(tableName = "csv_file_log", indices = [Index(value = ["file_name"], unique = true)])
 data class CsvFileLogEntity(
 

@@ -80,9 +80,11 @@ class CsvExplorerActivity : AppCompatActivity() {
         /* Acceleration Numeric data collection */
         val accNumericDataList = ArrayList<AccelerationNumericData>()
 
-        //Skip header
-        dataList.removeAt(0)
-        for ((ts, x, y, z) in dataList) {
+        val localDataList: ArrayList<AccelerationStringData> = ArrayList()
+        for (i in 1 until dataList.size)                                        //Skip header
+            localDataList.add(dataList[i])
+
+        for ((ts, x, y, z) in localDataList) {
             val accNumericData = AccelerationNumericData()
             accNumericData.ts = ts.toLong()
             accNumericData.x = x.toFloat()
@@ -101,15 +103,6 @@ class CsvExplorerActivity : AppCompatActivity() {
             data[count] = accNumericDataList[count++ / 3].y.toDouble()
             data[count] = accNumericDataList[count++ / 3].z.toDouble()
         }
-        /*
-        val predictedFallResult = RandomForestClassifier.predict(data)
-        val predictedImpactResult = RFClassifierForImpactData.predict(data)
-        Log.i(TAG, "Predicted:")
-        Log.i(TAG, "Fall Result: $predictedFallResult")
-        Log.i(TAG, "Impact Result: $predictedImpactResult")
-        Log.i(TAG, "=======================================================================================")
-        Toast.makeText(this, "$result\nPredicted\nFall Result: $predictedFallResult\nImpact Result: $predictedImpactResult", Toast.LENGTH_SHORT).show()
-        */
     }
 
 
