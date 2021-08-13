@@ -35,6 +35,9 @@ database.
 
 
 ## Database Tables
+Room database has been used for this application. For more information on Room database follow this [link](https://developer.android.com/reference/android/arch/persistence/room/RoomDatabase)
+
+Below mentioned tables we have in this application. Table details overview also available along with this.
 * accelerometer_log
 * csv_file_log
 
@@ -92,7 +95,10 @@ parent/root
        |
        └── ZebraApp
                ├── csvData
-               └── logs
+               ├── decrypt
+               ├── encrypt
+               ├── logs
+               └── zipFiles
 ```
 #### Android 11(R), API 30
 ```

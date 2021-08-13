@@ -8,6 +8,14 @@ import android.content.IntentFilter
 import android.os.Build
 import com.alumnus.zebra.broadcastReceiver.BootReceiver
 
+/**
+ * This is the application class.
+ * It launch before the Launcher Activity.
+ * And its become alive as long as app keep alive.
+ * When app gets killed by user this class also get killed.
+ *
+ * @author Arnab Kundu
+ */
 class ZebraApp : Application() {
 
     override fun onCreate() {
