@@ -106,7 +106,7 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // TODO("Not yet implemented")
+
     }
 
     private fun fetchRecordFromDBAndExportIntoCsvFile(fileName: String) {

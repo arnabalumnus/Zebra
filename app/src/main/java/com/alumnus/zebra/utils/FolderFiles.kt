@@ -118,7 +118,8 @@ object FolderFiles {
      * Generic function to delete a file
      * @param context
      * @param folderName
-     * @param fileNameWithExtension
+     * @param fileName
+     * @param fileExtension
      * @return Boolean
      */
     fun deleteFile(context: Context?, folderName: String, fileName: String, fileExtension: String): Boolean {

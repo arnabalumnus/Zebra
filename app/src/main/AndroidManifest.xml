@@ -77,7 +77,7 @@
         <activity
             android:name=".ui.activity.SpecificEventTypeRecorderActivity"
             android:label="Event Recorder">
-            <!-- TODO Make it LAUNCHER to generate separate Event Recorder app
+            <!-- TODO Make it LAUNCHER to generate separate **Event Recorder App**
                     - To make this activity LAUNCHER uncomment below intent-filter block
                     - Comment out MainActivity intent-filter block
                     - Change package name in build.gradle(Module: Zebra.app) at line no:13 -->

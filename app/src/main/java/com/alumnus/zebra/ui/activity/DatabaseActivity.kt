@@ -1,6 +1,7 @@
 package com.alumnus.zebra.ui.activity
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -92,7 +93,13 @@ class DatabaseActivity : AppCompatActivity() {
      */
     private fun zipAllCSVFiles(listOfCsv: List<CsvFileLogEntity>) {
         val s = Array<String>(listOfCsv.size) { "it = $it" }
-        val filePath = "/storage/emulated/0/ZebraApp/csvData/" //TODO Android R filePath
+
+        // TODO find a better way to get the file path, rather than hardcoded string path
+        val filePath: String
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+            filePath = "/storage/emulated/0/ZebraApp/csvData/"                                        // Android 10(Q) filePath
+        else
+            filePath = "/storage/self/primary/Android/data/com.alumnus.zebra/files/ZebraApp/csvData/" // Android 11(R) filePath
         for (row in listOfCsv.indices) {
             s[row] = filePath + listOfCsv[row].file_name + ".csv"
         }
@@ -110,7 +117,7 @@ class DatabaseActivity : AppCompatActivity() {
         // Zip and delete available csvFiles
         if (isFilesAvailableForZipping) {
             val zipManager = ZipManager()
-            zipFilePath = zipManager.zip(s)
+            zipFilePath = zipManager.zip(this, s)
             for (stringFilePath in s) {
                 val f = File(stringFilePath)
                 f.delete()

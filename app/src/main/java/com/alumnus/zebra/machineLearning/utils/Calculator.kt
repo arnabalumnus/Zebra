@@ -36,7 +36,8 @@ object Calculator {
      * Estimate distance of a free fall event
      * s = ut + ½gt²
      * 1 meter = 3.28 ft
-     * TODO ?? unknown fraction 1.225
+     * TODO information unknown for the fraction 1.225
+     *  Copied from python code. Anyway this method's output is OK
      * @param duration      Free fall time in millisecond
      * @return              Distance(in ft) covered in the that duration of free fall
      */

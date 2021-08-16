@@ -1,8 +1,6 @@
 package com.alumnus.zebra.machineLearning
 
 import android.content.Context
-import android.util.Log
-import com.alumnus.zebra.BuildConfig
 import com.alumnus.zebra.machineLearning.enums.EventType
 import com.alumnus.zebra.machineLearning.pojo.DetectedEvent
 import com.alumnus.zebra.machineLearning.pojo.EventNoisePair
@@ -486,12 +484,12 @@ class DataAnalysis {
     private fun parseEvents(eventList: ArrayList<DetectedEvent>, tsDataSet: ArrayList<Long>) {
         var spinResult: String
         var impactType: String
-        if (BuildConfig.DEBUG) {
-            for (event in eventList) {
-                appendLog(context, mFileName, event.toString())
-                println(event)
-            }
+
+        for (event in eventList) {
+            appendLog(context, mFileName, event.toString())
+            println(event)
         }
+
         var lastEvent = 0
         for (event in eventList) {
             if (event.event_type == EVENT_FREEFALL) {
@@ -501,6 +499,8 @@ class DataAnalysis {
                     spinResult = "No"
                 }
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
+                // TODO machineLearning()
+                //  check if significant
                 println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
             } else if (event.event_type == EVENT_IMPACT) {
                 if (event.impactType == TYPE_IMPACT_HARD) {

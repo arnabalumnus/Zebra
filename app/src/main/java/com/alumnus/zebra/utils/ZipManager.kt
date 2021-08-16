@@ -1,5 +1,6 @@
 package com.alumnus.zebra.utils
 
+import android.content.Context
 import android.util.Log
 import com.alumnus.zebra.utils.FolderFiles.createFolder
 import java.io.BufferedInputStream
@@ -34,8 +35,8 @@ class ZipManager {
      * @param _files      Array of files to be zipped
      * @param zipFileName Provide a name for the zip file which will be generated
      */
-    fun zip(_files: Array<String>, zipFileName: String = DateFormatter.getTimeStampFileName(System.currentTimeMillis())): String {
-        val pathOfZebraFolder = createFolder(null, "zipFiles/")
+    fun zip(context: Context, _files: Array<String>, zipFileName: String = DateFormatter.getTimeStampFileName(System.currentTimeMillis())): String {
+        val pathOfZebraFolder: String = createFolder(context, "zipFiles")
         try {
             var origin: BufferedInputStream? = null
             val dest = FileOutputStream("$pathOfZebraFolder/$zipFileName.zip")
