@@ -1,7 +1,6 @@
 package com.alumnus.zebra.ui.activity
 
 import android.Manifest
-import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,8 +12,6 @@ import androidx.core.app.ActivityCompat
 import com.alumnus.zebra.R
 import com.alumnus.zebra.broadcastReceiver.PowerConnectionReceiver
 import com.alumnus.zebra.machineLearning.utils.ExportFiles.prepareDataChunk
-import com.alumnus.zebra.service.LifeTimeService
-import com.alumnus.zebra.utils.AutoStart
 import com.alumnus.zebra.utils.Constant
 
 /**
@@ -30,7 +27,6 @@ import com.alumnus.zebra.utils.Constant
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
-    var frequency = 50 //Records per second from accelerometer
     private lateinit var sp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,9 +38,6 @@ class MainActivity : AppCompatActivity() {
                 val editor = sp.edit()
                 editor.putBoolean(Constant.isAutoStartPermissionGranted, true)
                 editor.apply()
-                AutoStart.addAutoStartup(this)
-                //or using com.github.judemanutd:autostarter:1.0.9
-                //AutoStartPermissionHelper.getInstance().getAutoStartPermission(this);
             }
         }
         val receiver = PowerConnectionReceiver()
@@ -55,16 +48,6 @@ class MainActivity : AppCompatActivity() {
         iFilter.addAction(Intent.ACTION_BATTERY_LOW)
         iFilter.addAction(Intent.ACTION_BATTERY_OKAY)
         registerReceiver(receiver, iFilter)
-        //unregisterReceiver(receiver);
-
-        /*ServiceStopReceiver serviceStopReceiver = new ServiceStopReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.example.LifeTimeService.stopped");
-        registerReceiver(serviceStopReceiver, intentFilter);*/
-
-        //AutoStart.addAutoStartup(this);
-        //BatteryOptimizationSettings.allowMorePower(this);
-        //turnOffBatterySaverMIUI()
     }
 
     fun goToAccelerometer(view: View?) {
@@ -76,20 +59,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun startLifeTimeService(v: View?) {
-        val intent = Intent(this, LifeTimeService::class.java)
-        intent.putExtra("frequency", frequency)
-        startService(intent)
-        val myIntent = Intent(this, LifeTimeService::class.java)
-        myIntent.putExtra("ALARM", true)
-        val pendingIntent = PendingIntent.getService(this, 0, myIntent, 0)
-        /**
-         * AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-         * long firstTime = SystemClock.elapsedRealtime();
-         * alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 5 * 60 * 1000, pendingIntent);
-         */
-    }
-
     fun navigateToDatabase(view: View?) {
         startActivity(Intent(this, DatabaseActivity::class.java))
     }
@@ -99,10 +68,6 @@ class MainActivity : AppCompatActivity() {
         if (isStoragePermissionGranted) {
             prepareDataChunk(this, true)
         }
-    }
-
-    fun navigateToJobActivity(view: View?) {
-        //startActivity(new Intent(this, JobActivity.class));
     }
 
     //permission is automatically granted on sdk<23 upon installation
@@ -131,22 +96,8 @@ class MainActivity : AppCompatActivity() {
                 val editor = sp.edit()
                 editor.putBoolean(Constant.isAutoStartPermissionGranted, true)
                 editor.apply()
-                AutoStart.addAutoStartup(this)
-                //or using com.github.judemanutd:autostarter:1.0.9
-                //AutoStartPermissionHelper.getInstance().getAutoStartPermission(this);
             }
         }
     } //endregion
-
-    private fun turnOffBatterySaverMIUI() {
-        try {
-            val intent = Intent()
-            intent.component = ComponentName("com.miui.powerkeeper", "com.miui.powerkeeper.ui.HiddenAppsConfigActivity")
-            intent.putExtra("package_name", packageName)
-            intent.putExtra("package_label", getText(R.string.app_name))
-            startActivity(intent)
-        } catch (anfe: ActivityNotFoundException) {
-        }
-    }
 
 }

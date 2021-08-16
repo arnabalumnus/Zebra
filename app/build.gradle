@@ -14,7 +14,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
-        versionName "5.2.1"
+        versionName "5.2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -24,18 +24,6 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
-    }
-
-    // Exclude java and kotlin file. Avoid compiling specified files
-    sourceSets {
-        //  Create kotlin folder with main, test, androidTest folder.
-        //  Add kotlin folder in srcCode
-        //main.java.srcDirs += "src/main/kotlin"
-        main {
-            java {
-                exclude '**/SaveCsvJobService.java', '**/JobActivity.java', '**/ExportFile.java', '**/BatteryOptimizationSettings.java', '**/IpAddress.java', '**/RandomForestClassifier', '**/RFClassifierForImpactData'
             }
         }
     }
@@ -95,7 +83,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.3'                            // CSV file open dependency
 
     //https://github.com/judemanutd/AutoStarter
-    implementation 'com.github.judemanutd:autostarter:1.0.9'            // Request auto start permission in app for MI mobiles
+    //implementation 'com.github.judemanutd:autostarter:1.0.9'            // Request auto start permission in app for MI mobiles
 
     // https://mvnrepository.com/artifact/net.razorvine/pyrolite
     //implementation 'net.razorvine:run:4.4'                            // .pkl file
