@@ -399,6 +399,11 @@ class DataAnalysis {
         return prepareTFLiteModelInput(events)
     }
 
+    /**
+     * Prepare DataFrame for tfLite model input
+     *
+     * @param events is a  ArrayList of DetectedEvent
+     */
     private fun prepareTFLiteModelInput(events: ArrayList<DetectedEvent>): TensorFlowModelInput {
 
         var impactEventCount: Int = 0
@@ -499,8 +504,13 @@ class DataAnalysis {
                     spinResult = "No"
                 }
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
-                // TODO machineLearning()
-                //  check if significant
+                val isSignificantFreeFall = true  // TODO make it dynamic based on detected value
+                if (isSignificantFreeFall) {
+                    // TODO prediction()
+                    val tensorFlowModelInput: TensorFlowModelInput = prepareTFLiteModelInput(events = eventList)
+                    val outputString = ClassifiedPredictionManager.predictFreeFallEvent(context, tensorFlowModelInput)
+                    appendLog(context, mFileName, outputString)
+                }
                 println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
             } else if (event.event_type == EVENT_IMPACT) {
                 if (event.impactType == TYPE_IMPACT_HARD) {
@@ -515,9 +525,16 @@ class DataAnalysis {
                     impactType = "Negligible"
                 }
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType</p>")
-                println("After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType")
+                println("After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType</br>")
 
                 appendLog(context, mFileName, detectImpactDirection(TSV, event.eventStart, event.eventEnd - 1))
+                val isSignificantImpact = true // TODO make it dynamic based on detected value
+                if (isSignificantImpact) {
+                    // TODO prediction()
+                    val tensorFlowModelInput: TensorFlowModelInput = prepareTFLiteModelInput(events = eventList)
+                    val outputString = ClassifiedPredictionManager.predictFreeFallEvent(context, tensorFlowModelInput)
+                    appendLog(context, mFileName, outputString)
+                }
                 //println("${detectImpactDirection(TSV, event.eventStart, event.count - 1)}")
             } else {
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Unknown event of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms</p>")

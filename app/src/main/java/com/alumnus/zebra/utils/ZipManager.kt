@@ -68,7 +68,7 @@ class ZipManager {
      *
      * @param _zipFile        Fully qualified filename. i.e path + filename
      * @param _targetLocation Folder location where files will be saved after extraction
-     * TODO Need to implement based on requirement
+     * TODO Method not utilized yet. Need to implement later based on unzipping requirement
      */
     fun unzip(_zipFile: String?, _targetLocation: String) {
 

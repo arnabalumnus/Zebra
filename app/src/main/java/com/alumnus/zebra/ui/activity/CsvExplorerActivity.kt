@@ -93,7 +93,7 @@ class CsvExplorerActivity : AppCompatActivity() {
             accNumericDataList.add(accNumericData)
         }
         val result = DataAnalysis().startEventAnalysis(accNumericDataList, this, null)
-        runMachineLearning(result)
+        //runMachineLearning(result)
         Log.i(TAG, "LogFile: $result")
         Toast.makeText(this, "LogFile:\n$result", Toast.LENGTH_LONG).show()
         val data = DoubleArray(accNumericDataList.size * 3)
