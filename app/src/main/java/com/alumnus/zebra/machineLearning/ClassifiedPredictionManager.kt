@@ -48,15 +48,15 @@ object ClassifiedPredictionManager {
 
         if (predictedConfidence < PredictionManager.isPpEvent(context, dataFrame)) {
             predictedConfidence = PredictionManager.isPpEvent(context, dataFrame)
-            resultOutput = "Desk Slam"
+            resultOutput = "Put into pocket"
         }
         if (predictedConfidence < PredictionManager.isPfEvent(context, dataFrame)) {
             predictedConfidence = PredictionManager.isPfEvent(context, dataFrame)
-            resultOutput = "Floor Slam"
+            resultOutput = "Fall during Put into pocket"
         }
         if (predictedConfidence < PredictionManager.isFfEvent(context, dataFrame)) {
             predictedConfidence = PredictionManager.isFfEvent(context, dataFrame)
-            resultOutput = "Wall Slam"
+            resultOutput = "FreeFall"
         }
         val predictedOutputForLog: String = "Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b></br></br>"
         return predictedOutputForLog
