@@ -122,10 +122,7 @@ class CsvExplorerActivity : AppCompatActivity() {
                 predictedConfidence = PredictionManager.isWsEvent(this, dataFrame)
                 resultOutput = "Wall Slam"
             }
-            if (predictedConfidence < PredictionManager.isPpEvent(this, dataFrame)) {
-                predictedConfidence = PredictionManager.isPpEvent(this, dataFrame)
-                resultOutput = "Put into pocket"
-            }
+
             if (predictedConfidence < PredictionManager.isPfEvent(this, dataFrame)) {
                 predictedConfidence = PredictionManager.isPfEvent(this, dataFrame)
                 resultOutput = "Fall while put into Pocket"

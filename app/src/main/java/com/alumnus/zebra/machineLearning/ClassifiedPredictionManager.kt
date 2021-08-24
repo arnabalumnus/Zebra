@@ -31,7 +31,7 @@ object ClassifiedPredictionManager {
             predictedConfidence = PredictionManager.isWsEvent(context, dataFrame)
             resultOutput = "Wall Slam"
         }
-        val predictedOutputForLog: String = "Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b></br></br>"
+        val predictedOutputForLog: String = "</br>Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b></br></br>"
         return predictedOutputForLog
     }
 
@@ -46,10 +46,6 @@ object ClassifiedPredictionManager {
         var predictedConfidence = 0F
         var resultOutput: String = ""
 
-        if (predictedConfidence < PredictionManager.isPpEvent(context, dataFrame)) {
-            predictedConfidence = PredictionManager.isPpEvent(context, dataFrame)
-            resultOutput = "Put into pocket"
-        }
         if (predictedConfidence < PredictionManager.isPfEvent(context, dataFrame)) {
             predictedConfidence = PredictionManager.isPfEvent(context, dataFrame)
             resultOutput = "Fall during Put into pocket"
@@ -58,7 +54,19 @@ object ClassifiedPredictionManager {
             predictedConfidence = PredictionManager.isFfEvent(context, dataFrame)
             resultOutput = "FreeFall"
         }
-        val predictedOutputForLog: String = "Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b></br></br>"
+        if (predictedConfidence < PredictionManager.isHfEvent(context, dataFrame)) {
+            predictedConfidence = PredictionManager.isHfEvent(context, dataFrame)
+            resultOutput = "HeavyFreeFall"
+        }
+        if (predictedConfidence < PredictionManager.isOtEvent(context, dataFrame)) {
+            predictedConfidence = PredictionManager.isOtEvent(context, dataFrame)
+            resultOutput = "Forcibly thrown onto the floor"
+        }
+        if (predictedConfidence < PredictionManager.isUtEvent(context, dataFrame)) {
+            predictedConfidence = PredictionManager.isUtEvent(context, dataFrame)
+            resultOutput = "Thrown underarm from dist 5ft"
+        }
+        val predictedOutputForLog: String = "</br>Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b></br></br>"
         return predictedOutputForLog
     }
 

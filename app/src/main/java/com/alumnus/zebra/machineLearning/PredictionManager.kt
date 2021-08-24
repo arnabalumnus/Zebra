@@ -70,26 +70,6 @@ object PredictionManager {
         return output[0][0]
     }
 
-    fun isPpEvent(context: Context, dataFrame: TensorFlowModelInput): Float {
-        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "zebra_pp_model.tflite"))
-        val inputVal = FloatArray(8)
-
-        inputVal[0] = dataFrame.maxTSV.toFloat()
-        inputVal[1] = dataFrame.maxDTSV.toFloat()
-        inputVal[2] = dataFrame.avgTSV.toFloat()
-        inputVal[3] = dataFrame.avgDTSV.toFloat()
-        inputVal[4] = dataFrame.avgSeverity.toFloat()
-        inputVal[5] = dataFrame.minTSV.toFloat()
-        inputVal[6] = dataFrame.avgMinTSV.toFloat()
-        inputVal[7] = dataFrame.avgSpin.toFloat()
-
-        val output = Array(1) { FloatArray(1) }
-        tfLite.run(inputVal, output)
-        Log.i(TAG, "Put into pocket: ${output[0][0]}")
-        return output[0][0]
-    }
-
-
     fun isPfEvent(context: Context, dataFrame: TensorFlowModelInput): Float {
         val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "zebra_pf_model.tflite"))
         val inputVal = FloatArray(8)
@@ -124,7 +104,64 @@ object PredictionManager {
 
         val output = Array(1) { FloatArray(1) }
         tfLite.run(inputVal, output)
-        Log.i(TAG, "Fall from 3ft in x axis: ${output[0][0]}")
+        Log.i(TAG, "FreeFall from 3ft: ${output[0][0]}")
+        return output[0][0]
+    }
+
+    fun isHfEvent(context: Context, dataFrame: TensorFlowModelInput): Float {
+        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "zebra_hf_model.tflite"))
+        val inputVal = FloatArray(8)
+
+        inputVal[0] = dataFrame.maxTSV.toFloat()
+        inputVal[1] = dataFrame.maxDTSV.toFloat()
+        inputVal[2] = dataFrame.avgTSV.toFloat()
+        inputVal[3] = dataFrame.avgDTSV.toFloat()
+        inputVal[4] = dataFrame.avgSeverity.toFloat()
+        inputVal[5] = dataFrame.minTSV.toFloat()
+        inputVal[6] = dataFrame.avgMinTSV.toFloat()
+        inputVal[7] = dataFrame.avgSpin.toFloat()
+
+        val output = Array(1) { FloatArray(1) }
+        tfLite.run(inputVal, output)
+        Log.i(TAG, "HeavyFreeFall: ${output[0][0]}")
+        return output[0][0]
+    }
+
+    fun isOtEvent(context: Context, dataFrame: TensorFlowModelInput): Float {
+        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "zebra_ot_model.tflite"))
+        val inputVal = FloatArray(8)
+
+        inputVal[0] = dataFrame.maxTSV.toFloat()
+        inputVal[1] = dataFrame.maxDTSV.toFloat()
+        inputVal[2] = dataFrame.avgTSV.toFloat()
+        inputVal[3] = dataFrame.avgDTSV.toFloat()
+        inputVal[4] = dataFrame.avgSeverity.toFloat()
+        inputVal[5] = dataFrame.minTSV.toFloat()
+        inputVal[6] = dataFrame.avgMinTSV.toFloat()
+        inputVal[7] = dataFrame.avgSpin.toFloat()
+
+        val output = Array(1) { FloatArray(1) }
+        tfLite.run(inputVal, output)
+        Log.i(TAG, "Forcibly thrown onto the floor: ${output[0][0]}")
+        return output[0][0]
+    }
+
+    fun isUtEvent(context: Context, dataFrame: TensorFlowModelInput): Float {
+        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "zebra_ut_model.tflite"))
+        val inputVal = FloatArray(8)
+
+        inputVal[0] = dataFrame.maxTSV.toFloat()
+        inputVal[1] = dataFrame.maxDTSV.toFloat()
+        inputVal[2] = dataFrame.avgTSV.toFloat()
+        inputVal[3] = dataFrame.avgDTSV.toFloat()
+        inputVal[4] = dataFrame.avgSeverity.toFloat()
+        inputVal[5] = dataFrame.minTSV.toFloat()
+        inputVal[6] = dataFrame.avgMinTSV.toFloat()
+        inputVal[7] = dataFrame.avgSpin.toFloat()
+
+        val output = Array(1) { FloatArray(1) }
+        tfLite.run(inputVal, output)
+        Log.i(TAG, "Thrown underarm from dist 5ft: ${output[0][0]}")
         return output[0][0]
     }
 

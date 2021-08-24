@@ -402,7 +402,7 @@ class DataAnalysis {
         return prepareTFLiteModelInput(events)
     }
 
-    private fun getEventDataFrame(event: DetectedEvent, ts: ArrayList<Long>, tsvDataSet: ArrayList<Double>, dtsvDataSet: ArrayList<Double>) :TensorFlowModelInput{
+    private fun getEventDataFrame(event: DetectedEvent, ts: ArrayList<Long>, tsvDataSet: ArrayList<Double>, dtsvDataSet: ArrayList<Double>): TensorFlowModelInput {
 
         var impactEventCount: Int = 0
         var freeFallEventCount: Int = 0
@@ -585,14 +585,12 @@ class DataAnalysis {
                     spinResult = "No"
                 }
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
-                val isSignificantFreeFall = true  // TODO make it dynamic based on detected value
+                /** Is Significant FreeFall */
+                val isSignificantFreeFall: Boolean = (event.eventEnd - event.eventStart) / 1000000 >= FREEFALL_SIGNIFICANT // TODO make it true to get all events in log
                 if (isSignificantFreeFall) {
-
-                    // TODO prediction()
-                    //val tensorFlowModelInput: TensorFlowModelInput = prepareTFLiteModelInput(events = eventList)
                     val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
-                    val outputString = ClassifiedPredictionManager.predictFreeFallEvent(context, tensorFlowModelInput)
-                    appendLog(context, mFileName, outputString)
+                    val predictedOutput: String = ClassifiedPredictionManager.predictFreeFallEvent(context, tensorFlowModelInput)
+                    appendLog(context, mFileName, predictedOutput)
                 }
                 println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
             } else if (event.event_type == EVENT_IMPACT) {
@@ -611,10 +609,10 @@ class DataAnalysis {
                 println("After ${(event.eventStart - lastEvent)} ms: Impact of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])}, ms maximum TSV: ${(event.maxTsv)} m/s2, maximum DTSV: ${event.dTsv}, type: $impactType</br>")
 
                 appendLog(context, mFileName, detectImpactDirection(TSV, event.eventStart, event.eventEnd - 1))
-                val isSignificantImpact = true // TODO make it dynamic based on detected value
-                if (isSignificantImpact) {
-                    // TODO prediction()
-                    //val tensorFlowModelInput: TensorFlowModelInput = prepareTFLiteModelInput(events = eventList)
+                /** Is Significant Impact */
+                if (event.impactType == TYPE_IMPACT_FORCE) {                // TODO make it false to get all events in log
+                    // KEEP THIS BLOCK EMPTY TO FILTER OUT FORCE FROM IMPACT EVENTS
+                } else if (event.impactType >= TYPE_IMPACT_MEDIUM) {        // TODO make it true to get all events in log
                     val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
                     val outputString = ClassifiedPredictionManager.predictImpactEvent(context, tensorFlowModelInput)
                     appendLog(context, mFileName, outputString)
@@ -638,7 +636,7 @@ class DataAnalysis {
      * @param end           Event ending point
      * @return              Returns Impact direction of the event to log into logfile
      */
-// TODO Required xyz as params
+
     private fun detectImpactDirection(tsvDataSet: ArrayList<Double>, start: Int, end: Int): String {
         var xComponent = 0L
         var yComponent = 0L
