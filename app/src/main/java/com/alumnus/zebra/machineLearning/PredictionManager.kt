@@ -166,8 +166,65 @@ object PredictionManager {
     }
 
 
+    /**
+     * @param context
+     * @param modelInputArray Array of size (xyz * 200 =) 600
+     */
+    fun predictFallEventUsingNeuralNetwork(context: Context, modelInputArray: FloatArray): String {
+        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "neural_network_fall_data_model.tflite"))
 
 
+        val output = Array(1) { FloatArray(8) }
+        tfLite.run(modelInputArray, output)
+        Log.i(TAG, "HFYP: ${output[0][0]}")
+        Log.i(TAG, "PFXX: ${output[0][1]}")
+        Log.i(TAG, "FFXP: ${output[0][2]}")
+        Log.i(TAG, "FFZM: ${output[0][3]}")
+        Log.i(TAG, "HFXP: ${output[0][4]}")
+        Log.i(TAG, "FFYP: ${output[0][5]}")
+        Log.i(TAG, "OTXX: ${output[0][6]}")
+        Log.i(TAG, "UTXX: ${output[0][7]}")
+        Log.i(TAG, "=========================================")
+        var predictedOutput: String = ""
+        var confidence = 0F
+        if (output[0][0] > confidence) {
+            predictedOutput = "HFYP"
+            confidence = output[0][0]
+        }
+        if (output[0][1] > confidence) {
+            predictedOutput = "PFXX"
+            confidence = output[0][1]
+        }
+        if (output[0][2] > confidence) {
+            predictedOutput = "FFXP"
+            confidence = output[0][2]
+        }
+        if (output[0][2] > confidence) {
+            predictedOutput = "FFZM"
+            confidence = output[0][2]
+        }
+        if (output[0][3] > confidence) {
+            predictedOutput = "HFXP"
+            confidence = output[0][3]
+        }
+        if (output[0][4] > confidence) {
+            predictedOutput = "HFYP"
+            confidence = output[0][4]
+        }
+        if (output[0][5] > confidence) {
+            predictedOutput = "FFYP"
+            confidence = output[0][5]
+        }
+        if (output[0][6] > confidence) {
+            predictedOutput = "OTXX"
+            confidence = output[0][6]
+        }
+        if (output[0][7] > confidence) {
+            predictedOutput = "UTXX"
+            confidence = output[0][7]
+        }
+        return "</br>Predicted as <b>$predictedOutput</b> event with confidence: <b>$confidence</b> by Neural Network"
+    }
 
 
     /**

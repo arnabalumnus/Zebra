@@ -587,11 +587,31 @@ class DataAnalysis {
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
                 /** Is Significant FreeFall */
                 val isSignificantFreeFall: Boolean = (event.eventEnd - event.eventStart) / 1000000 >= FREEFALL_SIGNIFICANT // TODO make it true to get all events in log
-                if (isSignificantFreeFall) {
-                    val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
-                    val predictedOutput: String = ClassifiedPredictionManager.predictFreeFallEvent(context, tensorFlowModelInput)
+                //if (isSignificantFreeFall) {
+
+                /** Logistic Regression prediction part */
+                 val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
+                 val predictedOutput: String = ClassifiedPredictionManager.predictFreeFallEvent(context, tensorFlowModelInput)
+                 appendLog(context, mFileName, predictedOutput)
+
+                /** Neural Network prediction part */
+                if (event.eventEnd >= 200) {
+                    //val modelInputArray = arrayOf<Float>()
+                    val modelInputArray = FloatArray(600)
+                    var count = 0
+                    for (i in (event.eventEnd - 199)..event.eventEnd) {
+                        modelInputArray[3 * count + 0] = xyzList[i].x
+                        modelInputArray[3 * count + 1] = xyzList[i].y
+                        modelInputArray[3 * count + 2] = xyzList[i].z
+                        count++
+                    }
+
+                    val predictedOutput: String = PredictionManager.predictFallEventUsingNeuralNetwork(context, modelInputArray)
                     appendLog(context, mFileName, predictedOutput)
+                } else {
+
                 }
+                //}
                 println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
             } else if (event.event_type == EVENT_IMPACT) {
                 if (event.impactType == TYPE_IMPACT_HARD) {
