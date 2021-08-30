@@ -31,7 +31,7 @@ object ClassifiedPredictionManager {
             predictedConfidence = PredictionManager.isWsEvent(context, dataFrame)
             resultOutput = "Wall Slam"
         }
-        val predictedOutputForLog: String = "</br>Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b></br></br>"
+        val predictedOutputForLog: String = "</br>Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b> by Logistic Regression</br>"
         return predictedOutputForLog
     }
 
@@ -56,7 +56,7 @@ object ClassifiedPredictionManager {
         }
         if (predictedConfidence < PredictionManager.isHfEvent(context, dataFrame)) {
             predictedConfidence = PredictionManager.isHfEvent(context, dataFrame)
-            resultOutput = "HeavyFreeFall"
+            resultOutput = "Dropped from hand"
         }
         if (predictedConfidence < PredictionManager.isOtEvent(context, dataFrame)) {
             predictedConfidence = PredictionManager.isOtEvent(context, dataFrame)
@@ -66,7 +66,7 @@ object ClassifiedPredictionManager {
             predictedConfidence = PredictionManager.isUtEvent(context, dataFrame)
             resultOutput = "Thrown underarm from dist 5ft"
         }
-        val predictedOutputForLog: String = "</br>Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b></br></br>"
+        val predictedOutputForLog: String = "</br>Predicted a <b>$resultOutput</b> with Confidence:<b>${predictedConfidence}</b> by Logistic Regression</br>"
         return predictedOutputForLog
     }
 

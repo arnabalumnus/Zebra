@@ -123,7 +123,7 @@ object PredictionManager {
 
         val output = Array(1) { FloatArray(1) }
         tfLite.run(inputVal, output)
-        Log.i(TAG, "HeavyFreeFall: ${output[0][0]}")
+        Log.i(TAG, "HandFall: ${output[0][0]}")
         return output[0][0]
     }
 
@@ -189,42 +189,38 @@ object PredictionManager {
         var predictedOutput: String = ""
         var confidence = 0F
         if (output[0][0] > confidence) {
-            predictedOutput = "HFYP"
+            predictedOutput = "Fall from hand on y axis"
             confidence = output[0][0]
         }
         if (output[0][1] > confidence) {
-            predictedOutput = "PFXX"
+            predictedOutput = "Fall during put into pocket"
             confidence = output[0][1]
         }
         if (output[0][2] > confidence) {
-            predictedOutput = "FFXP"
-            confidence = output[0][2]
-        }
-        if (output[0][2] > confidence) {
-            predictedOutput = "FFZM"
+            predictedOutput = "FreeFall in X axis"
             confidence = output[0][2]
         }
         if (output[0][3] > confidence) {
-            predictedOutput = "HFXP"
+            predictedOutput = "FreeFall in Z axis"
             confidence = output[0][3]
         }
         if (output[0][4] > confidence) {
-            predictedOutput = "HFYP"
+            predictedOutput = "Fall from hand on x axis"
             confidence = output[0][4]
         }
         if (output[0][5] > confidence) {
-            predictedOutput = "FFYP"
+            predictedOutput = "FreeFall in Y axis"
             confidence = output[0][5]
         }
         if (output[0][6] > confidence) {
-            predictedOutput = "OTXX"
+            predictedOutput = "Over hand throw"
             confidence = output[0][6]
         }
         if (output[0][7] > confidence) {
-            predictedOutput = "UTXX"
+            predictedOutput = "Under hand throw"
             confidence = output[0][7]
         }
-        return "</br>Predicted as <b>$predictedOutput</b> event with confidence: <b>$confidence</b> by Neural Network"
+        return "</br>Predicted as <b>$predictedOutput</b> event with confidence: <b>$confidence</b> by Neural Network</br>"
     }
 
 
@@ -239,22 +235,22 @@ object PredictionManager {
 
         val output = Array(1) { FloatArray(3) }
         tfLite.run(modelInputArray, output)
-        Log.i(TAG, "FS: ${output[0][0]}")
-        Log.i(TAG, "DS: ${output[0][1]}")
+        Log.i(TAG, "DS: ${output[0][0]}")
+        Log.i(TAG, "FS: ${output[0][1]}")
         Log.i(TAG, "WS: ${output[0][2]}")
         Log.i(TAG, "=========================================")
         var predictedOutput: String = ""
         var confidence = 0F
         if (output[0][0] > confidence) {
-            predictedOutput = "FS"
+            predictedOutput = "Desk Slam"
             confidence = output[0][0]
         }
         if (output[0][1] > confidence) {
-            predictedOutput = "DS"
+            predictedOutput = "Floor Slam"
             confidence = output[0][1]
         }
         if (output[0][2] > confidence) {
-            predictedOutput = "WS"
+            predictedOutput = "Wall Slam"
             confidence = output[0][2]
         }
         return "</br>Predicted as <b>$predictedOutput</b> event with confidence: <b>$confidence</b> by Neural Network</br>"

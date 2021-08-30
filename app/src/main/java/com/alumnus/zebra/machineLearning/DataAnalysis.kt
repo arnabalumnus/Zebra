@@ -596,7 +596,6 @@ class DataAnalysis {
 
                 /** Neural Network prediction part */
                 if (event.eventEnd >= 200) {
-                    //val modelInputArray = arrayOf<Float>()
                     val modelInputArray = FloatArray(600)
                     var count = 0
                     for (i in (event.eventEnd - 199)..event.eventEnd) {
@@ -640,7 +639,6 @@ class DataAnalysis {
 
                 /** Neural Network prediction part */
                 if (event.eventEnd >= 100) {
-                    //val modelInputArray = arrayOf<Float>()
                     val modelInputArray = FloatArray(300)
                     var count = 0
                     for (i in (event.eventEnd - 99)..event.eventEnd) {
