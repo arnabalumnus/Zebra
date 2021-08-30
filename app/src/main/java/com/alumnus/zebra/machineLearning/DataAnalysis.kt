@@ -609,7 +609,7 @@ class DataAnalysis {
                     val predictedOutput: String = PredictionManager.predictFallEventUsingNeuralNetwork(context, modelInputArray)
                     appendLog(context, mFileName, predictedOutput)
                 } else {
-
+                    appendLog(context, mFileName, "Significant FreeFall event detected but don't have enough data to predict.</br>")
                 }
                 //}
                 println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
@@ -636,6 +636,24 @@ class DataAnalysis {
                     val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
                     val outputString = ClassifiedPredictionManager.predictImpactEvent(context, tensorFlowModelInput)
                     appendLog(context, mFileName, outputString)
+                }
+
+                /** Neural Network prediction part */
+                if (event.eventEnd >= 100) {
+                    //val modelInputArray = arrayOf<Float>()
+                    val modelInputArray = FloatArray(300)
+                    var count = 0
+                    for (i in (event.eventEnd - 99)..event.eventEnd) {
+                        modelInputArray[3 * count + 0] = xyzList[i].x
+                        modelInputArray[3 * count + 1] = xyzList[i].y
+                        modelInputArray[3 * count + 2] = xyzList[i].z
+                        count++
+                    }
+
+                    val predictedOutput: String = PredictionManager.predictImpactEventUsingNeuralNetwork(context, modelInputArray)
+                    appendLog(context, mFileName, predictedOutput)
+                } else {
+                    appendLog(context, mFileName, "Significant Impact event detected but don't have enough data to predict.</br>")
                 }
                 //println("${detectImpactDirection(TSV, event.eventStart, event.count - 1)}")
             } else {

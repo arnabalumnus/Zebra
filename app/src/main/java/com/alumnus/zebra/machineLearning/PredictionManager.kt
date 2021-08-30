@@ -167,8 +167,9 @@ object PredictionManager {
 
 
     /**
+     * Predict FreeFall event using Neural Network algorithm
      * @param context
-     * @param modelInputArray Array of size (xyz * 200 =) 600
+     * @param modelInputArray Array of size 600 = (x * 200 + y * 200 + z * 200)
      */
     fun predictFallEventUsingNeuralNetwork(context: Context, modelInputArray: FloatArray): String {
         val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "neural_network_fall_data_model.tflite"))
@@ -224,6 +225,39 @@ object PredictionManager {
             confidence = output[0][7]
         }
         return "</br>Predicted as <b>$predictedOutput</b> event with confidence: <b>$confidence</b> by Neural Network"
+    }
+
+
+    /**
+     * Predict Impact event using Neural Network algorithm
+     *
+     * @param context
+     * @param modelInputArray Array of size 300 = (x * 100 + y * 100 + z * 100)
+     */
+    fun predictImpactEventUsingNeuralNetwork(context: Context, modelInputArray: FloatArray): String {
+        val tfLite: Interpreter = Interpreter(loadModelFile(context = context, modelFileName = "neural_network_impact_data_model.tflite"))
+
+        val output = Array(1) { FloatArray(3) }
+        tfLite.run(modelInputArray, output)
+        Log.i(TAG, "FS: ${output[0][0]}")
+        Log.i(TAG, "DS: ${output[0][1]}")
+        Log.i(TAG, "WS: ${output[0][2]}")
+        Log.i(TAG, "=========================================")
+        var predictedOutput: String = ""
+        var confidence = 0F
+        if (output[0][0] > confidence) {
+            predictedOutput = "FS"
+            confidence = output[0][0]
+        }
+        if (output[0][1] > confidence) {
+            predictedOutput = "DS"
+            confidence = output[0][1]
+        }
+        if (output[0][2] > confidence) {
+            predictedOutput = "WS"
+            confidence = output[0][2]
+        }
+        return "</br>Predicted as <b>$predictedOutput</b> event with confidence: <b>$confidence</b> by Neural Network</br>"
     }
 
 
