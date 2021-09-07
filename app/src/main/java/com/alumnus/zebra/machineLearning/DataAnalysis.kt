@@ -12,7 +12,9 @@ import com.alumnus.zebra.machineLearning.utils.Calculator.estimateDistance
 import com.alumnus.zebra.machineLearning.utils.LogFileGenerator.appendLog
 import com.alumnus.zebra.machineLearning.utils.SimpsonsRule
 import com.alumnus.zebra.pojo.AccelerationNumericData
+import com.alumnus.zebra.utils.CsvFileOperator
 import com.alumnus.zebra.utils.DateFormatter
+import com.alumnus.zebra.utils.FolderFiles
 
 
 //var prefallData TODO convert from python code
@@ -587,7 +589,7 @@ class DataAnalysis {
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
                 /** Is Significant FreeFall */
                 val isSignificantFreeFall: Boolean = (event.eventEnd - event.eventStart) / 1000000 >= FREEFALL_SIGNIFICANT // TODO make it true to get all events in log
-                //if (isSignificantFreeFall) {
+                if (isSignificantFreeFall) {
 
                 /** Logistic Regression prediction part */
                  val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
@@ -598,19 +600,23 @@ class DataAnalysis {
                 if (event.eventEnd >= 200) {
                     val modelInputArray = FloatArray(600)
                     var count = 0
-                    for (i in (event.eventEnd - 199)..event.eventEnd) {
+                    val tempArrayList:ArrayList<AccelerationNumericData> = ArrayList()
+                    for (i in (event.eventEnd - 199)..event.eventEnd) { // TODO Right shift bt 10
                         modelInputArray[3 * count + 0] = xyzList[i].x
                         modelInputArray[3 * count + 1] = xyzList[i].y
                         modelInputArray[3 * count + 2] = xyzList[i].z
                         count++
+                        tempArrayList.add(AccelerationNumericData(count.toLong(),xyzList[i].x,xyzList[i].y,xyzList[i].z))
                     }
+                    FolderFiles.createFolder(context,"events_only")
+                    CsvFileOperator.writeCsvFile(context,tempArrayList,"events_only","Arnab"+System.currentTimeMillis())
 
                     val predictedOutput: String = PredictionManager.predictFallEventUsingNeuralNetwork(context, modelInputArray)
                     appendLog(context, mFileName, predictedOutput)
                 } else {
                     appendLog(context, mFileName, "Significant FreeFall event detected but don't have enough data to predict.</br>")
                 }
-                //}
+                }
                 println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
             } else if (event.event_type == EVENT_IMPACT) {
                 if (event.impactType == TYPE_IMPACT_HARD) {
@@ -635,24 +641,30 @@ class DataAnalysis {
                     val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
                     val outputString = ClassifiedPredictionManager.predictImpactEvent(context, tensorFlowModelInput)
                     appendLog(context, mFileName, outputString)
-                }
 
-                /** Neural Network prediction part */
-                if (event.eventEnd >= 100) {
-                    val modelInputArray = FloatArray(300)
-                    var count = 0
-                    for (i in (event.eventEnd - 99)..event.eventEnd) {
-                        modelInputArray[3 * count + 0] = xyzList[i].x
-                        modelInputArray[3 * count + 1] = xyzList[i].y
-                        modelInputArray[3 * count + 2] = xyzList[i].z
-                        count++
+                    /** Neural Network prediction part */
+                    if (event.eventEnd >= 100) {
+                        val modelInputArray = FloatArray(300)
+                        var count = 0
+                        val tempArrayList:ArrayList<AccelerationNumericData> = ArrayList()
+                        for (i in (event.eventEnd - 99)..event.eventEnd) { // TODO Right shift by 20
+                            modelInputArray[3 * count + 0] = xyzList[i].x
+                            modelInputArray[3 * count + 1] = xyzList[i].y
+                            modelInputArray[3 * count + 2] = xyzList[i].z
+                            count++
+                            tempArrayList.add(AccelerationNumericData(count.toLong(),xyzList[i].x,xyzList[i].y,xyzList[i].z))
+                        }
+                        FolderFiles.createFolder(context,"events_only")
+                        CsvFileOperator.writeCsvFile(context,tempArrayList,"events_only","Arnab"+System.currentTimeMillis())
+
+                        val predictedOutput: String = PredictionManager.predictImpactEventUsingNeuralNetwork(context, modelInputArray)
+                        appendLog(context, mFileName, predictedOutput)
+                    } else {
+                        appendLog(context, mFileName, "Significant Impact event detected but don't have enough data to predict.</br>")
                     }
-
-                    val predictedOutput: String = PredictionManager.predictImpactEventUsingNeuralNetwork(context, modelInputArray)
-                    appendLog(context, mFileName, predictedOutput)
-                } else {
-                    appendLog(context, mFileName, "Significant Impact event detected but don't have enough data to predict.</br>")
                 }
+
+
                 //println("${detectImpactDirection(TSV, event.eventStart, event.count - 1)}")
             } else {
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Unknown event of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms</p>")
