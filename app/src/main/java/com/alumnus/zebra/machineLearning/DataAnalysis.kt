@@ -588,34 +588,37 @@ class DataAnalysis {
                 }
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
                 /** Is Significant FreeFall */
-                val isSignificantFreeFall: Boolean = (event.eventEnd - event.eventStart) / 1000000 >= FREEFALL_SIGNIFICANT // TODO make it true to get all events in log
+                val isSignificantFreeFall: Boolean = ((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]) / 1000000 >= FREEFALL_SIGNIFICANT) // TODO make it true to get all events in log
                 if (isSignificantFreeFall) {
 
-                /** Logistic Regression prediction part */
-                 val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
-                 val predictedOutput: String = ClassifiedPredictionManager.predictFreeFallEvent(context, tensorFlowModelInput)
-                 appendLog(context, mFileName, predictedOutput)
-
-                /** Neural Network prediction part */
-                if (event.eventEnd >= 200) {
-                    val modelInputArray = FloatArray(600)
-                    var count = 0
-                    val tempArrayList:ArrayList<AccelerationNumericData> = ArrayList()
-                    for (i in (event.eventEnd - 199)..event.eventEnd) { // TODO Right shift bt 10
-                        modelInputArray[3 * count + 0] = xyzList[i].x
-                        modelInputArray[3 * count + 1] = xyzList[i].y
-                        modelInputArray[3 * count + 2] = xyzList[i].z
-                        count++
-                        tempArrayList.add(AccelerationNumericData(count.toLong(),xyzList[i].x,xyzList[i].y,xyzList[i].z))
-                    }
-                    FolderFiles.createFolder(context,"events_only")
-                    CsvFileOperator.writeCsvFile(context,tempArrayList,"events_only","Arnab"+System.currentTimeMillis())
-
-                    val predictedOutput: String = PredictionManager.predictFallEventUsingNeuralNetwork(context, modelInputArray)
+                    /** Logistic Regression prediction part */
+                    val tensorFlowModelInput: TensorFlowModelInput = getEventDataFrame(event, tsDataSet, TSV, DTSV)
+                    val predictedOutput: String = ClassifiedPredictionManager.predictFreeFallEvent(context, tensorFlowModelInput)
                     appendLog(context, mFileName, predictedOutput)
-                } else {
-                    appendLog(context, mFileName, "Significant FreeFall event detected but don't have enough data to predict.</br>")
-                }
+
+                    /** Neural Network prediction part */
+                    /** Length of a FreeFall EVENT is 200 */
+                    /** 210 length check is for 10 buffer size for FreeFall event. IndexOutOfOBound can occur without this check */
+                    if (event.eventEnd >= 200 && xyzList.size > 210) {
+                        val modelInputArray = FloatArray(600)
+                        var count = 0
+                        val tempArrayList: ArrayList<AccelerationNumericData> = ArrayList()
+                        // Right shift by 10(as buffer) to sync with Model training Python code.
+                        for (i in (event.eventEnd - 189)..(event.eventEnd + 10)) {
+                            modelInputArray[3 * count + 0] = xyzList[i].x
+                            modelInputArray[3 * count + 1] = xyzList[i].y
+                            modelInputArray[3 * count + 2] = xyzList[i].z
+                            count++
+                            tempArrayList.add(AccelerationNumericData(count.toLong(), xyzList[i].x, xyzList[i].y, xyzList[i].z))
+                        }
+                        FolderFiles.createFolder(context, "events_only")
+                        CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "Arnab" + System.currentTimeMillis())
+
+                        val predictedOutput: String = PredictionManager.predictFallEventUsingNeuralNetwork(context, modelInputArray)
+                        appendLog(context, mFileName, predictedOutput)
+                    } else {
+                        appendLog(context, mFileName, "Significant FreeFall event detected but don't have enough data to predict.</br>")
+                    }
                 }
                 println("After ${(event.eventStart - lastEvent)} ms: Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.event_type])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult")
             } else if (event.event_type == EVENT_IMPACT) {
@@ -643,19 +646,22 @@ class DataAnalysis {
                     appendLog(context, mFileName, outputString)
 
                     /** Neural Network prediction part */
-                    if (event.eventEnd >= 100) {
+                    /** Length of a IMPACT EVENT is 100 */
+                    /** 120 length check for 20 buffer size for IMPACT event. IndexOutOfOBound can occur without this check */
+                    if (event.eventEnd >= 100 && xyzList.size > 120) {
                         val modelInputArray = FloatArray(300)
                         var count = 0
-                        val tempArrayList:ArrayList<AccelerationNumericData> = ArrayList()
-                        for (i in (event.eventEnd - 99)..event.eventEnd) { // TODO Right shift by 20
+                        val tempArrayList: ArrayList<AccelerationNumericData> = ArrayList()
+                        /** Right shift by 20(as buffer) to sync with Model training Python code. */
+                        for (i in (event.eventEnd - 79)..(event.eventEnd + 20)) {
                             modelInputArray[3 * count + 0] = xyzList[i].x
                             modelInputArray[3 * count + 1] = xyzList[i].y
                             modelInputArray[3 * count + 2] = xyzList[i].z
                             count++
-                            tempArrayList.add(AccelerationNumericData(count.toLong(),xyzList[i].x,xyzList[i].y,xyzList[i].z))
+                            tempArrayList.add(AccelerationNumericData(count.toLong(), xyzList[i].x, xyzList[i].y, xyzList[i].z))
                         }
-                        FolderFiles.createFolder(context,"events_only")
-                        CsvFileOperator.writeCsvFile(context,tempArrayList,"events_only","Arnab"+System.currentTimeMillis())
+                        FolderFiles.createFolder(context, "events_only")
+                        CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "Arnab" + System.currentTimeMillis())
 
                         val predictedOutput: String = PredictionManager.predictImpactEventUsingNeuralNetwork(context, modelInputArray)
                         appendLog(context, mFileName, predictedOutput)
