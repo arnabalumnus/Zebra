@@ -604,7 +604,7 @@ class DataAnalysis {
                         var count = 0
                         val tempArrayList: ArrayList<AccelerationNumericData> = ArrayList()
                         // Right shift by 10(as buffer) to sync with Model training Python code.
-                        for (i in (event.eventEnd - 189)..(event.eventEnd + 10)) {
+                        for (i in (event.eventStart - 189)..(event.eventStart + 10)) {
                             modelInputArray[3 * count + 0] = xyzList[i].x
                             modelInputArray[3 * count + 1] = xyzList[i].y
                             modelInputArray[3 * count + 2] = xyzList[i].z
@@ -612,7 +612,7 @@ class DataAnalysis {
                             tempArrayList.add(AccelerationNumericData(count.toLong(), xyzList[i].x, xyzList[i].y, xyzList[i].z))
                         }
                         FolderFiles.createFolder(context, "events_only")
-                        CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "Arnab" + System.currentTimeMillis())
+                        CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "FreeFall" + System.currentTimeMillis())
 
                         val predictedOutput: String = PredictionManager.predictFallEventUsingNeuralNetwork(context, modelInputArray)
                         appendLog(context, mFileName, predictedOutput)
@@ -653,7 +653,7 @@ class DataAnalysis {
                         var count = 0
                         val tempArrayList: ArrayList<AccelerationNumericData> = ArrayList()
                         /** Right shift by 20(as buffer) to sync with Model training Python code. */
-                        for (i in (event.eventEnd - 79)..(event.eventEnd + 20)) {
+                        for (i in (event.eventStart - 79)..(event.eventStart + 20)) {
                             modelInputArray[3 * count + 0] = xyzList[i].x
                             modelInputArray[3 * count + 1] = xyzList[i].y
                             modelInputArray[3 * count + 2] = xyzList[i].z
@@ -661,7 +661,7 @@ class DataAnalysis {
                             tempArrayList.add(AccelerationNumericData(count.toLong(), xyzList[i].x, xyzList[i].y, xyzList[i].z))
                         }
                         FolderFiles.createFolder(context, "events_only")
-                        CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "Arnab" + System.currentTimeMillis())
+                        CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "Impact" + System.currentTimeMillis())
 
                         val predictedOutput: String = PredictionManager.predictImpactEventUsingNeuralNetwork(context, modelInputArray)
                         appendLog(context, mFileName, predictedOutput)
