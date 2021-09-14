@@ -588,7 +588,7 @@ class DataAnalysis {
                 }
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
                 /** Is Significant FreeFall */
-                val isSignificantFreeFall: Boolean = ((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])  >= FREEFALL_SIGNIFICANT) // TODO make it true to get all events in log
+                val isSignificantFreeFall: Boolean = ((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])/1000000 >= FREEFALL_SIGNIFICANT) // TODO make it true to get all events in log
                 if (isSignificantFreeFall) {
 
                     /** Logistic Regression prediction part */

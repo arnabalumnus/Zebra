@@ -1,22 +1,27 @@
 package com.alumnus.zebra.ui.activity
 
 import android.Manifest
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import androidx.room.Room
 import com.alumnus.zebra.R
 import com.alumnus.zebra.db.AppDatabase
 import com.alumnus.zebra.db.entity.AccLogEntity
+import com.alumnus.zebra.machineLearning.DataAnalysis
 import com.alumnus.zebra.machineLearning.utils.ExportFiles
 import com.alumnus.zebra.pojo.AccelerationNumericData
 import com.alumnus.zebra.utils.Constant
@@ -25,11 +30,14 @@ import com.alumnus.zebra.utils.CsvFileOperator
 import com.alumnus.zebra.utils.DateFormatter
 import com.alumnus.zebra.utils.FolderFiles
 import kotlinx.android.synthetic.main.activity_specfice_event_type_recorder.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.io.File
 
+/**
+ * This Activity used for Event recording App. Do the flowing changes to enable this class as LAUNCHER Activity
+ *  1. In Manifest flow the TODO
+ *  2. app/build.gradle file change the package name "com.alumnus.zebra" to "com.alumnus.zebra.recoder"
+ */
 class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListener {
 
     private val TAG = "SpecificEventTypeRecord"
@@ -105,21 +113,29 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-
-    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
     private fun fetchRecordFromDBAndExportIntoCsvFile(fileName: String) {
-        val accLogEntities: List<AccLogEntity> = db!!.accLogDao().all
-        val accelerationsDataList: ArrayList<AccelerationNumericData> = ArrayList()
-        for (accLogEntity in accLogEntities) {
-            accelerationsDataList.add(AccelerationNumericData(accLogEntity.ts, accLogEntity.x, accLogEntity.y, accLogEntity.z))
+        CoroutineScope(Dispatchers.Main).launch {
+            val deferred = CoroutineScope(Dispatchers.IO).async {
+                val accLogEntities: List<AccLogEntity> = db!!.accLogDao().all
+                val accelerationsDataList: ArrayList<AccelerationNumericData> = ArrayList()
+                for (accLogEntity in accLogEntities) {
+                    accelerationsDataList.add(AccelerationNumericData(accLogEntity.ts, accLogEntity.x, accLogEntity.y, accLogEntity.z))
+                }
+                FolderFiles.createFolder(this@SpecificEventTypeRecorderActivity, "KnownTypesEvent")
+                CsvFileOperator.writeCsvFile(this@SpecificEventTypeRecorderActivity, accelerationsDataList, folderName = "KnownTypesEvent", fileName = "$fileName-${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}")
+                db!!.accLogDao().deleteAll(System.currentTimeMillis())
+                Log.d("msg", "fetchRecordFromDBAndExportIntoCsvFile: $fileName ${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}")
+                FolderFiles.deleteFile(this@SpecificEventTypeRecorderActivity, "logs", "log-cacheLog", ".html")
+                DataAnalysis().startEventAnalysis(accelerationsDataList, this@SpecificEventTypeRecorderActivity, "cacheLog")
+            }
+            deferred.await()
+            btn_start_tracking.isEnabled = true
+
+            val logHtmlFilePath = "/sdcard/ZebraApp/logs/log-cacheLog.html"
+            openHtmlUsingChrome(logHtmlFilePath)
         }
-        FolderFiles.createFolder(this, "KnownTypesEvent")
-        CsvFileOperator.writeCsvFile(this, accelerationsDataList, folderName = "KnownTypesEvent", fileName = "$fileName-${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}")
-        db!!.accLogDao().deleteAll(System.currentTimeMillis())
-        Log.d("msg", "fetchRecordFromDBAndExportIntoCsvFile: $fileName ${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}")
-        btn_start_tracking.isEnabled = true
     }
 
     //permission is automatically granted on sdk<23 upon installation
@@ -149,6 +165,66 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
                 editor.putBoolean(Constant.isAutoStartPermissionGranted, true)
                 editor.apply()
             }
+        }
+    }
+
+    /**
+     * Opens any web URL using browser app through intent.
+     *
+     * @param url
+     */
+    private fun openWebPage(url: String) {
+        try {
+            val webpage: Uri = Uri.parse(url)
+            val myIntent = Intent(Intent.ACTION_VIEW, webpage)
+            startActivity(myIntent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+
+
+    /**
+     * Opens .jpg file using Photos or Gallery app
+     *
+     * @param imageFilePath     Sample_path: /sdcard/Download/test.jpg
+     */
+    private fun openImageUsingGallery(imageFilePath: String) {
+        val file = File(imageFilePath)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val apkURI = FileProvider.getUriForFile(applicationContext, "$packageName.provider", file)
+            intent.setDataAndType(apkURI, "image/jpg")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        } else {
+            intent.setDataAndType(Uri.fromFile(file), "image/jpg")
+        }
+        startActivity(intent)
+    }
+
+
+    /**
+     * Opens .html files using browser app through intent.
+     *
+     * @param htmlFilePath              Sample_path: /sdcard/ZebraApp/logs/log-cacheLog.html"
+     */
+    private fun openHtmlUsingChrome(htmlFilePath: String) {
+        try {
+            val file = File(htmlFilePath)
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                val apkURI = FileProvider.getUriForFile(applicationContext, "$packageName.provider", file)
+                intent.setDataAndType(apkURI, "text/plain")
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            } else {
+                intent.setDataAndType(Uri.fromFile(file), "text/plain")
+            }
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+            Log.e(TAG, "openHtmlUsingChrome: ${e.message}")
         }
     }
 }
