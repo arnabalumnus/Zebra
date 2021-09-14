@@ -155,3 +155,15 @@ Hence it supports in below API level devices
 | Pie          |      9.0     |    28   |                    |
 | Android 10   |      10.0    |    29   | Quince Tart(Q)     |
 | Android 11   |      11.0    |    30   | Red Velvet Cake(R) |
+
+
+## Android Studio Version(4.1.1)
+This app is developed in Android Studio version of 4.1.1
+
+So to get maximum compatibility in development environment use the same version. 
+Other wise there must be some version changes in gradle files.
+
+## Versions
+1. compileSdkVersion 30
+2. buildToolsVersion "30.0.3"
+3. JDK version 1.8

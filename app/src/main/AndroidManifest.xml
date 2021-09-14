@@ -37,11 +37,11 @@
         </activity>
 
         <activity android:name=".ui.activity.MainActivity">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
 
         <activity android:name=".ui.activity.AccelerometerActivity" />
@@ -82,15 +82,15 @@
                     - To make this activity LAUNCHER uncomment below intent-filter block
                     - Comment out MainActivity intent-filter block
                     - Change package name in build.gradle(Module: Zebra.app) at line no:13 -->
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
 
         <!--TODO Enable this provider block for EventRecorder App (i.e. SpecificEventTypeRecorderActivity)-->
-        <provider
+        <!--<provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
@@ -98,7 +98,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
-        </provider>
+        </provider>-->
 
 
         <activity android:name=".ui.activity.DecryptActivity" android:label="Decrypt" android:exported="true">
