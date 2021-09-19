@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.room.Room
-import com.alumnus.zebra.R
+import com.alumnus.zebra.databinding.ActivitySpecficeEventTypeRecorderBinding
 import com.alumnus.zebra.db.AppDatabase
 import com.alumnus.zebra.db.entity.AccLogEntity
 import com.alumnus.zebra.machineLearning.DataAnalysis
@@ -29,7 +29,6 @@ import com.alumnus.zebra.utils.Constant.DATABASE_NAME
 import com.alumnus.zebra.utils.CsvFileOperator
 import com.alumnus.zebra.utils.DateFormatter
 import com.alumnus.zebra.utils.FolderFiles
-import kotlinx.android.synthetic.main.activity_specfice_event_type_recorder.*
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -51,10 +50,14 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
 
     private var trackingUpToTime: Long = 0
     private lateinit var fileName: String
+    private lateinit var binding: ActivitySpecficeEventTypeRecorderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_specfice_event_type_recorder)
+
+        binding = ActivitySpecficeEventTypeRecorderBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        //setContentView(R.layout.activity_specfice_event_type_recorder)
 
         db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).allowMainThreadQueries().build()
         accLogEntity = AccLogEntity()
@@ -73,15 +76,15 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
      * Button Click
      */
     fun startTracking(view: View) {
-        if (et_time_span.text.toString().isNotBlank()) {
-            btn_start_tracking.isEnabled = false
+        if (binding.etTimeSpan.text.toString().isNotBlank()) {
+            binding.btnStartTracking.isEnabled = false
             val mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
             val mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
             mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_STATUS_ACCURACY_LOW)
-            trackingUpToTime = System.currentTimeMillis() + et_time_span.text.toString().toLong() * 1000 ?: 0
-            fileName = et_event_type.text.toString() ?: "UndefinedFileName"
+            trackingUpToTime = System.currentTimeMillis() + binding.etTimeSpan.text.toString().toLong() * 1000 ?: 0
+            fileName = binding.etEventType.text.toString() ?: "UndefinedFileName"
         } else {
-            et_time_span.error = "Cannot be empty"
+            binding.etTimeSpan.error = "Cannot be empty"
         }
     }
 
@@ -124,14 +127,19 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
                     accelerationsDataList.add(AccelerationNumericData(accLogEntity.ts, accLogEntity.x, accLogEntity.y, accLogEntity.z))
                 }
                 FolderFiles.createFolder(this@SpecificEventTypeRecorderActivity, "KnownTypesEvent")
-                CsvFileOperator.writeCsvFile(this@SpecificEventTypeRecorderActivity, accelerationsDataList, folderName = "KnownTypesEvent", fileName = "$fileName-${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}")
+                CsvFileOperator.writeCsvFile(
+                    this@SpecificEventTypeRecorderActivity,
+                    accelerationsDataList,
+                    folderName = "KnownTypesEvent",
+                    fileName = "$fileName-${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}"
+                )
                 db!!.accLogDao().deleteAll(System.currentTimeMillis())
                 Log.d("msg", "fetchRecordFromDBAndExportIntoCsvFile: $fileName ${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}")
                 FolderFiles.deleteFile(this@SpecificEventTypeRecorderActivity, "logs", "log-cacheLog", ".html")
                 DataAnalysis().startEventAnalysis(accelerationsDataList, this@SpecificEventTypeRecorderActivity, "cacheLog")
             }
             deferred.await()
-            btn_start_tracking.isEnabled = true
+            binding.btnStartTracking.isEnabled = true
 
             val logHtmlFilePath = "/sdcard/ZebraApp/logs/log-cacheLog.html"
             openHtmlUsingChrome(logHtmlFilePath)

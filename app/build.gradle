@@ -1,21 +1,20 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
-    //ndkVersion '21.3.6528147'
+    ndkVersion '21.0.6113669'
 
     defaultConfig {
         applicationId "com.alumnus.zebra"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
-        versionName "5.3.5"
+        versionName "7.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -41,6 +40,7 @@ android {
     }
     buildFeatures {
         mlModelBinding true
+        viewBinding true
     }
 }
 
@@ -90,8 +90,8 @@ dependencies {
     //implementation 'net.razorvine:run:4.4'                            // .pkl file
 
     // TensorFlow
-    implementation 'org.tensorflow:tensorflow-lite-support:0.1.0-rc1'   // Tensor Flow Lite
-    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0-rc1'  // TensorFlow Model MetaData
+    implementation 'org.tensorflow:tensorflow-lite-support:0.2.0'   // Tensor Flow Lite
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2'  // TensorFlow Model MetaData
 
 }
 repositories {

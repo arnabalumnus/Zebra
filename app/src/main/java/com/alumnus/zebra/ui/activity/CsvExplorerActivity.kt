@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alumnus.zebra.BuildConfig
 import com.alumnus.zebra.R
+import com.alumnus.zebra.databinding.ActivityCsvExplorerBinding
 import com.alumnus.zebra.machineLearning.DataAnalysis
 import com.alumnus.zebra.machineLearning.PredictionManager
 import com.alumnus.zebra.machineLearning.pojo.TensorFlowModelInput
@@ -19,7 +20,6 @@ import com.alumnus.zebra.pojo.AccelerationStringData
 import com.alumnus.zebra.ui.adapter.AccelerationDataAdapter
 import com.alumnus.zebra.utils.CsvFileOperator.readCsvFile
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_csv_explorer.*
 import org.tensorflow.lite.Interpreter
 import java.io.File
 import java.io.FileInputStream
@@ -37,13 +37,17 @@ class CsvExplorerActivity : AppCompatActivity() {
 
     private val TAG = javaClass.simpleName
     private var tflite: Interpreter? = null
+    private lateinit var binding: ActivityCsvExplorerBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        setContentView(R.layout.activity_csv_explorer)
+
+        binding = ActivityCsvExplorerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        rv_acceleration_data.layoutManager = linearLayoutManager
+        binding.rvAccelerationData.layoutManager = linearLayoutManager
     }
 
     override fun onResume() {
@@ -61,7 +65,7 @@ class CsvExplorerActivity : AppCompatActivity() {
 
             // Feed adapter with data
             val accelerationDataAdapter = AccelerationDataAdapter(accelerations)
-            rv_acceleration_data!!.adapter = accelerationDataAdapter
+            binding.rvAccelerationData!!.adapter = accelerationDataAdapter
             if (BuildConfig.DEBUG) {
                 //runMachineLearning(accelerations)
                 generateLogFile(accelerations)
@@ -132,7 +136,8 @@ class CsvExplorerActivity : AppCompatActivity() {
                 resultOutput = "Free fall from 3feet i X axis"
             }
             Log.d(TAG, "predictedConfidence: $predictedConfidence")
-            Snackbar.make(findViewById(R.id.rv_acceleration_data), "$resultOutput \nConfidence:${predictedConfidence}", Snackbar.LENGTH_INDEFINITE).setAction("OK", {}).show()
+            Snackbar.make(findViewById(R.id.rv_acceleration_data), "$resultOutput \nConfidence:${predictedConfidence}", Snackbar.LENGTH_INDEFINITE)
+                .setAction("OK", {}).show()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -173,7 +178,10 @@ class CsvExplorerActivity : AppCompatActivity() {
         inputVal[6] = dataFrame.avgMinTSV.toFloat()
         inputVal[7] = dataFrame.avgSpin.toFloat()
 
-        Log.d(TAG, "DataSet: [${inputVal[0]}, ${inputVal[1]}, ${inputVal[2]}, ${inputVal[3]}, ${inputVal[4]}, ${inputVal[5]}, ${inputVal[6]}, ${inputVal[7]}}] ")
+        Log.d(
+            TAG,
+            "DataSet: [${inputVal[0]}, ${inputVal[1]}, ${inputVal[2]}, ${inputVal[3]}, ${inputVal[4]}, ${inputVal[5]}, ${inputVal[6]}, ${inputVal[7]}}] "
+        )
 
         val output = Array(1) { FloatArray(1) }
         tflite!!.run(inputVal, output)
@@ -200,8 +208,8 @@ class CsvExplorerActivity : AppCompatActivity() {
             accNumericData.z = z.toFloat()
             tsvList.add(Calculator.calculateTSV(x = accNumericData.x.toDouble(), y = accNumericData.y.toDouble(), z = accNumericData.z.toDouble()))
         }
-        Log.d(TAG, "Max G: ${tsvList.max()}")
-        Log.d(TAG, "Min G: ${tsvList.min()}")
+        Log.d(TAG, "Max G: ${tsvList.maxOrNull()}")
+        Log.d(TAG, "Min G: ${tsvList.minOrNull()}")
         var extram_force_applied = 0
         var free_fall_count = 0
         for (g in tsvList) {
@@ -211,6 +219,6 @@ class CsvExplorerActivity : AppCompatActivity() {
                 extram_force_applied += 1
         }
 
-        return arrayOf(tsvList.max()!!.toInt(), tsvList.min()!!.toInt())
+        return arrayOf(tsvList.maxOrNull()!!.toInt(), tsvList.minOrNull()!!.toInt())
     }
 }

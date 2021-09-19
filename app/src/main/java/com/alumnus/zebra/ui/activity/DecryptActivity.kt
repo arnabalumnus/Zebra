@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.alumnus.zebra.R
+import com.alumnus.zebra.databinding.ActivityDecryptBinding
 import com.alumnus.zebra.utils.EncryptManager
-import kotlinx.android.synthetic.main.activity_decrypt.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,10 +17,14 @@ class DecryptActivity : AppCompatActivity() {
     private val TAG = "DecryptActivity"
 
     private lateinit var uri: Uri
+    private lateinit var binding: ActivityDecryptBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_decrypt)
+
+        binding = ActivityDecryptBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        //setContentView(R.layout.activity_decrypt)
 
         uri = intent.data!! // Get File data from Intent
         val uriPath: File = File(uri.path!!)
@@ -34,10 +37,11 @@ class DecryptActivity : AppCompatActivity() {
         Log.d(TAG, "inputStream: $inputStream")
         CoroutineScope(Dispatchers.IO).launch {
             EncryptManager.saveDecryptedFile(
-                    context = this@DecryptActivity,
-                    inputStream = inputStream,
-                    outputFileName = et_decrypt_filename.text.toString(),
-                    outputFileExtension = EncryptManager.FileType.zip)
+                context = this@DecryptActivity,
+                inputStream = inputStream,
+                outputFileName = binding.etDecryptFilename.text.toString(),
+                outputFileExtension = EncryptManager.FileType.zip
+            )
         }
         finish()
     }

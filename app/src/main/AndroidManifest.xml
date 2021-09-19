@@ -22,6 +22,7 @@
         android:theme="@style/Theme.Zebra">
         <activity
             android:name=".ui.activity.CsvExplorerActivity"
+            android:exported="true"
             android:theme="@style/Theme.NoActionBar">
             <intent-filter
                 android:scheme="http"
@@ -36,7 +37,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activity.MainActivity">
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,10 +49,14 @@
 
         <activity android:name=".ui.activity.AccelerometerActivity" />
         <activity android:name=".ui.activity.ServiceActivity" />
-        <activity android:name=".ui.activity.DatabaseActivity" android:label="Database" />
+        <activity
+            android:name=".ui.activity.DatabaseActivity"
+            android:label="Database" />
 
 
-        <receiver android:name=".broadcastReceiver.PowerConnectionReceiver">
+        <receiver
+            android:name=".broadcastReceiver.PowerConnectionReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
@@ -77,6 +84,7 @@
             android:process=":dataCollect" />
         <activity
             android:name=".ui.activity.SpecificEventTypeRecorderActivity"
+            android:exported="true"
             android:label="Event Recorder">
             <!-- TODO Make it LAUNCHER to generate separate **Event Recorder App**
                     - To make this activity LAUNCHER uncomment below intent-filter block
@@ -101,7 +109,10 @@
         </provider>-->
 
 
-        <activity android:name=".ui.activity.DecryptActivity" android:label="Decrypt" android:exported="true">
+        <activity
+            android:name=".ui.activity.DecryptActivity"
+            android:exported="true"
+            android:label="Decrypt">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
