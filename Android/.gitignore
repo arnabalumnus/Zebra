@@ -2,4 +2,4 @@
 /sampleData
 /.gradle
 /.idea
-/schemas
+*/schemas

@@ -72,6 +72,7 @@ dependencies {
 
     // test dependency
     testImplementation 'junit:junit:4.+'                                            // junit4
+    androidTestImplementation 'junit:junit:4.12'                                    // junit4
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'                       // junit
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'          // espresso
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'         // ui automator
