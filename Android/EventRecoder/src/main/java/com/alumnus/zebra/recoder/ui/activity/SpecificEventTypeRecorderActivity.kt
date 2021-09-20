@@ -126,11 +126,11 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
                 for (accLogEntity in accLogEntities) {
                     accelerationsDataList.add(AccelerationNumericData(accLogEntity.ts, accLogEntity.x, accLogEntity.y, accLogEntity.z))
                 }
-                FolderFiles.createFolder(this@SpecificEventTypeRecorderActivity, "KnownTypesEvent")
+                FolderFiles.createFolder(this@SpecificEventTypeRecorderActivity, "recordedEvents")
                 CsvFileOperator.writeCsvFile(
                     this@SpecificEventTypeRecorderActivity,
                     accelerationsDataList,
-                    folderName = "KnownTypesEvent",
+                    folderName = "recordedEvents",
                     fileName = "$fileName-${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}"
                 )
                 db!!.accLogDao().deleteAll(System.currentTimeMillis())

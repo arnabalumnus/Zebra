@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Event type*"
+        android:hint="Event type(FileName)*"
         android:inputType="textCapWords"
         app:layout_constraintBottom_toTopOf="@id/et_time_span"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,4 +42,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_time_span" />
+
+    <TextView
+        android:id="@+id/tv_saved_file_path"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Path:     /root/ZebraApp/recordedEvents/FileName.csv"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
