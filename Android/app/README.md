@@ -155,6 +155,7 @@ Hence it supports in below API level devices
 | Pie          |      9.0     |    28   |                    |
 | Android 10   |      10.0    |    29   | Quince Tart(Q)     |
 | Android 11   |      11.0    |    30   | Red Velvet Cake(R) |
+| Android 12   |      12.0    |    31   | Snow Cone(S)       |
 
 
 ## Android Studio Version(2020.3.1)
@@ -166,5 +167,5 @@ Other wise there must be some version changes in gradle files.
 ## Versions
 1. compileSdkVersion 31
 2. buildToolsVersion 30.0.3
-3. JDK version 1.8
+3. JDK version 11
 4. gradle-wrapper.properties 7.0.2

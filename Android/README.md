@@ -157,7 +157,7 @@ Hence it supports in below API level devices
 | Pie          |      9.0     |    28   |                    |
 | Android 10   |      10.0    |    29   | Quince Tart(Q)     |
 | Android 11   |      11.0    |    30   | Red Velvet Cake(R) |
-| Android 12   |      12.0    |    31   | Android 12(S)      |
+| Android 12   |      12.0    |    31   | Snow Cone(S)       |
 
 
 ## Android Studio Version(2020.3.1)
