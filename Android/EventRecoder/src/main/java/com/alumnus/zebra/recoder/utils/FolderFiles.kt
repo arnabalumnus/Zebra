@@ -36,7 +36,7 @@ object FolderFiles {
                 e.printStackTrace()
             }
         }
-        return logFolder.absolutePath;
+        return logFolder.absolutePath
     }
 
 

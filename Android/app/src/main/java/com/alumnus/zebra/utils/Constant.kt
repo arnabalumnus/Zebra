@@ -31,4 +31,5 @@ object Constant {
      */
     const val DATA_CHUNK_SIZE = 131072
     const val RETAIN_NUMBER_OF_CSV_FILE = 100
+    const val HAS_CAPTURED_EVENT_ONLY_FOLDER_IN = true
 }

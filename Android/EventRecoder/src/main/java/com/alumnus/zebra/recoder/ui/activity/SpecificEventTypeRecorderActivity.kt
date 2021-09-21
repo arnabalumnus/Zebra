@@ -33,9 +33,7 @@ import kotlinx.coroutines.*
 import java.io.File
 
 /**
- * This Activity used for Event recording App. Do the flowing changes to enable this class as LAUNCHER Activity
- *  1. In Manifest flow the TODO
- *  2. app/build.gradle file change the package name "com.alumnus.zebra" to "com.alumnus.zebra.recoder"
+ * This Activity used for Event recording for specific time.
  */
 class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListener {
 
@@ -57,7 +55,6 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
 
         binding = ActivitySpecficeEventTypeRecorderBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //setContentView(R.layout.activity_specfice_event_type_recorder)
 
         db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, DATABASE_NAME).allowMainThreadQueries().build()
         accLogEntity = AccLogEntity()

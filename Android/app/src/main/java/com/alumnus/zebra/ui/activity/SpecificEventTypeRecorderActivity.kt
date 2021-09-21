@@ -33,8 +33,8 @@ import kotlinx.coroutines.*
 import java.io.File
 
 /**
- * This Activity used for Event recording App. Do the flowing changes to enable this class as LAUNCHER Activity
- *  1. In Manifest flow the TODO
+ * This Activity used for Event recording App. Do the following changes to enable this class as LAUNCHER Activity
+ *  1. In Manifest follow the TODO
  *  2. app/build.gradle file change the package name "com.alumnus.zebra" to "com.alumnus.zebra.recoder"
  */
 class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListener {
@@ -126,11 +126,11 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
                 for (accLogEntity in accLogEntities) {
                     accelerationsDataList.add(AccelerationNumericData(accLogEntity.ts, accLogEntity.x, accLogEntity.y, accLogEntity.z))
                 }
-                FolderFiles.createFolder(this@SpecificEventTypeRecorderActivity, "KnownTypesEvent")
+                FolderFiles.createFolder(this@SpecificEventTypeRecorderActivity, "recordedEvents")
                 CsvFileOperator.writeCsvFile(
                     this@SpecificEventTypeRecorderActivity,
                     accelerationsDataList,
-                    folderName = "KnownTypesEvent",
+                    folderName = "recordedEvents",
                     fileName = "$fileName-${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}"
                 )
                 db!!.accLogDao().deleteAll(System.currentTimeMillis())
@@ -141,7 +141,10 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
             deferred.await()
             binding.btnStartTracking.isEnabled = true
 
-            val logHtmlFilePath = "/sdcard/ZebraApp/logs/log-cacheLog.html"
+            val logHtmlFilePath: String = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+                "/sdcard/ZebraApp/logs/log-cacheLog.html"
+            else
+                "/sdcard/Android/data/com.alumnus.zebra.recoder/files/ZebraApp/logs/log-cacheLog.html"
             openHtmlUsingChrome(logHtmlFilePath)
         }
     }

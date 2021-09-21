@@ -12,6 +12,7 @@ import com.alumnus.zebra.machineLearning.utils.Calculator.estimateDistance
 import com.alumnus.zebra.machineLearning.utils.LogFileGenerator.appendLog
 import com.alumnus.zebra.machineLearning.utils.SimpsonsRule
 import com.alumnus.zebra.pojo.AccelerationNumericData
+import com.alumnus.zebra.utils.Constant
 import com.alumnus.zebra.utils.CsvFileOperator
 import com.alumnus.zebra.utils.DateFormatter
 import com.alumnus.zebra.utils.FolderFiles
@@ -588,7 +589,7 @@ class DataAnalysis {
                 }
                 appendLog(context, mFileName, "<p><b>After ${(event.eventStart - lastEvent)} ms:</b> Freefall of duration ${(tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])} ms, minimum TSV: ${(event.minTsv)} m/s2, estimated fall: ${estimateDistance((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]).toDouble())} feet, spin detected: $spinResult</p>")
                 /** Is Significant FreeFall */
-                val isSignificantFreeFall: Boolean = ((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart])/1000000 >= FREEFALL_SIGNIFICANT) // TODO make it true to get all events in log
+                val isSignificantFreeFall: Boolean = ((tsDataSet[event.eventEnd] - tsDataSet[event.eventStart]) >= FREEFALL_SIGNIFICANT) // TODO make it true to get all events in log
                 if (isSignificantFreeFall) {
 
                     /** Logistic Regression prediction part */
@@ -611,9 +612,10 @@ class DataAnalysis {
                             count++
                             tempArrayList.add(AccelerationNumericData(count.toLong(), xyzList[i].x, xyzList[i].y, xyzList[i].z))
                         }
-                        FolderFiles.createFolder(context, "events_only")
-                        CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "FreeFall" + System.currentTimeMillis())
-
+                        if (Constant.HAS_CAPTURED_EVENT_ONLY_FOLDER_IN) {
+                            FolderFiles.createFolder(context, "events_only")
+                            CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "FreeFall" + System.currentTimeMillis())
+                        }
                         val predictedOutput: String = PredictionManager.predictFallEventUsingNeuralNetwork(context, modelInputArray)
                         appendLog(context, mFileName, predictedOutput)
                     } else {
@@ -660,8 +662,10 @@ class DataAnalysis {
                             count++
                             tempArrayList.add(AccelerationNumericData(count.toLong(), xyzList[i].x, xyzList[i].y, xyzList[i].z))
                         }
-                        FolderFiles.createFolder(context, "events_only")
-                        CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "Impact" + System.currentTimeMillis())
+                        if (Constant.HAS_CAPTURED_EVENT_ONLY_FOLDER_IN) {
+                            FolderFiles.createFolder(context, "events_only")
+                            CsvFileOperator.writeCsvFile(context, tempArrayList, "events_only", "Impact" + System.currentTimeMillis())
+                        }
 
                         val predictedOutput: String = PredictionManager.predictImpactEventUsingNeuralNetwork(context, modelInputArray)
                         appendLog(context, mFileName, predictedOutput)
