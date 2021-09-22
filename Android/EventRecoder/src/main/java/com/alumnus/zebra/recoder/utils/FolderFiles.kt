@@ -24,7 +24,7 @@ object FolderFiles {
      */
     fun createFolder(context: Context? = null, folderName: String): String {
 
-        val logFolder: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+        val logFolder: File = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q)
             File(Environment.getExternalStorageDirectory(), "$PARENT_DIRECTORY_NAME/$folderName")
         else
             File(context?.getExternalFilesDir(PARENT_DIRECTORY_NAME), folderName)
@@ -49,7 +49,7 @@ object FolderFiles {
      */
     fun createFile(context: Context? = null, folderName: String, fileName: String, fileExtension: String): File {
 
-        val file: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+        val file: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
             File(Environment.getExternalStorageDirectory(), "$PARENT_DIRECTORY_NAME/$folderName/$fileName.$fileExtension")
         else
             File(context?.getExternalFilesDir(PARENT_DIRECTORY_NAME), "$folderName/$fileName.$fileExtension")
@@ -124,7 +124,7 @@ object FolderFiles {
      */
     fun deleteFile(context: Context?, folderName: String, fileName: String, fileExtension: String): Boolean {
 
-        val file: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+        val file: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
             File(Environment.getExternalStorageDirectory(), "$PARENT_DIRECTORY_NAME/$folderName/$fileName$fileExtension")
         else
             File(context?.getExternalFilesDir(PARENT_DIRECTORY_NAME), "$folderName/$fileName$fileExtension")

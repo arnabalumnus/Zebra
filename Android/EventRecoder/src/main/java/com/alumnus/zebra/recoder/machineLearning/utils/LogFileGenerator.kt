@@ -19,7 +19,7 @@ object LogFileGenerator {
      * Create logs folder and write log files
      */
     fun appendLog(context: Context, mFileName: String, text: String) {
-        val logFolder: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+        val logFolder: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
             File(Environment.getExternalStorageDirectory(), "ZebraApp/logs")
         else
             File(context.getExternalFilesDir("ZebraApp"), "logs")
@@ -33,7 +33,7 @@ object LogFileGenerator {
         }
 
 
-        val logFile: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+        val logFile: File = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
             File(Environment.getExternalStorageDirectory(), "ZebraApp/logs/log-$mFileName.html")
         else
             File(context.getExternalFilesDir("ZebraApp"), "logs/log-$mFileName.html")

@@ -138,7 +138,7 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
             deferred.await()
             binding.btnStartTracking.isEnabled = true
 
-            val logHtmlFilePath: String = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
+            val logHtmlFilePath: String = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
                 "/sdcard/ZebraApp/logs/log-cacheLog.html"
             else
                 "/sdcard/Android/data/com.alumnus.zebra.recoder/files/ZebraApp/logs/log-cacheLog.html"
