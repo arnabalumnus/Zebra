@@ -1,0 +1,6 @@
+/build
+/sampleData
+/.gradle
+/.idea
+*/schemas
+local.properties

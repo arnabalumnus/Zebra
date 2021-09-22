@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.alumnus.zebra">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".ZebraApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Zebra">
+        <activity
+            android:name=".ui.activity.CsvExplorerActivity"
+            android:exported="true"
+            android:theme="@style/Theme.NoActionBar">
+            <intent-filter
+                android:scheme="http"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/csv" />
+                <data android:mimeType="text/comma-separated-values" />
+                <!--<data android:mimeType="application/pdf" />-->
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.activity.AccelerometerActivity" />
+        <activity android:name=".ui.activity.ServiceActivity" />
+        <activity
+            android:name=".ui.activity.DatabaseActivity"
+            android:label="Database" />
+
+
+        <receiver
+            android:name=".broadcastReceiver.PowerConnectionReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="android.intent.action.BATTERY_LOW" />
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".broadcastReceiver.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.REBOOT" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".service.LifeTimeService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync"
+            android:process=":dataCollect" />
+        <activity
+            android:name=".ui.activity.SpecificEventTypeRecorderActivity"
+            android:exported="true"
+            android:label="Event Recorder">
+            <!-- TODO Make it LAUNCHER to generate separate **Event Recorder App**
+                    - To make this activity LAUNCHER uncomment below intent-filter block
+                    - Comment out MainActivity intent-filter block
+                    - Change package name in build.gradle(Module: Zebra.app) at line no:13 -->
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
+
+        <!--TODO Enable this provider block for EventRecorder App (i.e. SpecificEventTypeRecorderActivity)-->
+        <!--<provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>-->
+
+
+        <activity
+            android:name=".ui.activity.DecryptActivity"
+            android:exported="true"
+            android:label="Decrypt">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="ftp" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.enc" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.enc" />
+                <data android:pathPattern=".*\\..*\\..*\\.enc" />
+                <data android:pathPattern=".*\\..*\\.enc" />
+                <data android:pathPattern=".*\\.enc" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

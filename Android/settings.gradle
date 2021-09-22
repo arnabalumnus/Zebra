@@ -1,0 +1,2 @@
+include ':app', 'EventRecoder'
+rootProject.name = "Zebra"
