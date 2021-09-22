@@ -134,6 +134,7 @@ class SpecificEventTypeRecorderActivity : AppCompatActivity(), SensorEventListen
                 Log.d("msg", "fetchRecordFromDBAndExportIntoCsvFile: $fileName ${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}")
                 FolderFiles.deleteFile(this@SpecificEventTypeRecorderActivity, "logs", "log-cacheLog", ".html")
                 DataAnalysis().startEventAnalysis(accelerationsDataList, this@SpecificEventTypeRecorderActivity, "cacheLog")
+                DataAnalysis().startEventAnalysis(accelerationsDataList, this@SpecificEventTypeRecorderActivity, "${DateFormatter.getTimeStampFileName(System.currentTimeMillis())}")
             }
             deferred.await()
             binding.btnStartTracking.isEnabled = true
