@@ -1,10 +1,44 @@
 # Zebra Machine Learning part
 
-## Software requirement
-1. Need to have [Python](https://www.python.org/downloads/) installed in system.
-2. Need to install some python package/module using `pip install` commend.
-3. Use [PyCharm](https://www.jetbrains.com/pycharm/download/#section=windows) IDE (Optional)
 
+## Introduction
+In this Machine learning part of Zebra project has been done in  3 ways.
+1. **Artificial Neural Network**
+2. **Logistic Regression**
+3. **Legacy algorithms**( Random Forest / Support vector machines(SVM) / Decision Forest)       
+
+The `colab` folder contains all python files that need to be run using [Google colab](https://colab.research.google.com/#create=true) to generate `model.tflite` file.
+
+### 1. Artificial Neural Network (ANN)
+The files responsible for generating model using ANN algo are:
+1. `AnnZebraFreefall.ipynb`
+2. `AnnZebraImpact.ipynb`
+
+### 2. Logistic Regression
+The file responsible for generating model using Logistic Regression algo is:
+1. `Zebra_Logistic_Regrasion_Keras.ipynb`
+
+### 3. Legacy algorithms
+This `Rendom Forest`, `Support vector machines(SVM)`,  `Decision Forest` algorithms workers on `Sklearn` package.       
+
+And till today *( i.e. 22nd sept, 2021)* this algorithms doesn't have support in `TensorFlow APIs`. And according to our RND `TensorFlow` is the only one which can build model for` mobile` devices like `Android`.  
+
+>So as of now we are using `Artificial Neural Network` & `Logistic Regression` algorithms are only way to build our model using `Keras` & `TensorFlow APIs`.
+
+
+## APIs
+This following APIs has been used mostly to generate model for Zebra app using machine learning. 
+So its good to have prior knowledge on this libraries in python.
+
+1. Pandas
+2. numpy
+3. Tensorflow
+4. Keras
+5. Sklearn
+6. matplotlib.pyplot
+7. seaborn
+
+# TODO
 ## Folder structure
 ```
 python
