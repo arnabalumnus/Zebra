@@ -79,6 +79,7 @@ The `tfliteModel` folder contains all generated model(`.tflite`) files using pyt
 ## Folder structure
 ```
 python
+|
 ├── colab
 |     ├── AnnZebraFreefall.ipynb
 |     ├── AnnZebraImpact.ipynb
