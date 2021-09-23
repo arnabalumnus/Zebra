@@ -7,13 +7,12 @@ In this Machine learning part of Zebra project has been done in  3 ways.
 2. **Logistic Regression**
 3. **Legacy algorithms**( Random Forest / Support vector machines(SVM) / Decision Forest)       
 
-The `colab` folder contains all python files that need to be run using [Google colab](https://colab.research.google.com/#create=true) to generate `model.tflite` file.
+>**How to run:** *The `colab` folder contains `.ipynb` files that need to be run using [Google colab](https://colab.research.google.com/#create=true) to generate `model.tflite` file.*
 
 ### 1. Artificial Neural Network (ANN)
 The files responsible for generating model using ANN algo are:
 1. `AnnZebraFreefall.ipynb`
 2. `AnnZebraImpact.ipynb`
->DataFile Path:  
    
 ### 2. Logistic Regression
 The file responsible for generating model using Logistic Regression algo is:
@@ -21,8 +20,6 @@ The file responsible for generating model using Logistic Regression algo is:
 
 ### 3. Legacy algorithms(Not is use)
 This `Rendom Forest`, `Support vector machines(SVM)`,  `Decision Forest` algorithms workers on `Sklearn` package.       
-
-And till today *( i.e. 22nd sept, 2021)* this algorithms doesn't have support in `TensorFlow APIs`. And according to our RND `TensorFlow` is the only one which can build model for` mobile` devices like `Android`.  
 
 ##### How to generate Legacy model 
 Use this comment to generate models. Model will be generated as `.pkl` file.
@@ -43,7 +40,9 @@ For an example:
 ##### Output
 Find the output in cmd itself and in inside `./output/data` folder.
 
->So as of now we are using `Artificial Neural Network` & `Logistic Regression` algorithms are only way to build our model using `Keras` & `TensorFlow APIs`.
+>**Notes:**
+>1. *And till today *( i.e. 22nd sept, 2021)* this algorithms doesn't have support in **TensorFlow APIs**. And according to our RND **TensorFlow** is the only one which can build model for **mobile** devices like **Android**.*
+>2. *So as of now we are using **Artificial Neural Network** & **Logistic Regression** algorithms which is the only way to build our **tflite** model using **Keras** & **TensorFlow APIs**.*
 
 
 ## APIs
@@ -64,7 +63,7 @@ So its good to have prior knowledge on this libraries in python.
 #### To Run in cloud
 1. The best option to run `.ipynb` file in cloud is [Google Colab](https://colab.research.google.com/#create=true).
 And all `.ipynb` files configured in such a way that it have the best compatibility with [Google Colab](https://colab.research.google.com/#create=true).
-> Files available in colab folder should be run using Google colab
+>**Notes:** *Files available in colab folder should be run using Google colab*
 
 #### To Run in local
 1. Need to have [Python](https://www.python.org/downloads/) installed in system.
@@ -72,8 +71,10 @@ And all `.ipynb` files configured in such a way that it have the best compatibil
 3. Python files(`.py`) can be run using commend line interface (CMD)
 4. To run `.ipynb` files in local, **[JupiterNotebook](https://jupyter.org/)** is one of the option. And along with that **[Anaconda](https://www.anaconda.com/)** installation is also required.
 5. You can use [PyCharm](https://www.jetbrains.com/pycharm/download/#section=windows) IDE as well. But project is not prepared with that compatible structure.
-> Files available in python_legacy folder should be run in local by using CMD
+>**Notes:** *Files available in python_legacy folder should be run in local by using CMD*
 
+## Models
+The `tfliteModel` folder contains all generated model(`.tflite`) files using python scripts.
 
 ## Folder structure
 ```
