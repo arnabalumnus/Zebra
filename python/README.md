@@ -16,7 +16,7 @@ The files responsible for generating model using ANN algo are:
    
 ### 2. Logistic Regression
 The file responsible for generating model using Logistic Regression algo is:
-1. `Zebra_Logistic_Regrasion_Keras.ipynb`
+1. `ZebraModelGenaratorUsingLogisticRegression.ipynb`
 
 ### 3. Legacy algorithms(Not is use)
 This `Rendom Forest`, `Support vector machines(SVM)`,  `Decision Forest` algorithms workers on `Sklearn` package.       
